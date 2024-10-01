@@ -17,7 +17,8 @@ const routes = [
     {
         path: '/login',
         name: 'Login',
-        component: LoginPage
+        component: LoginPage,
+        meta: {title: 'Login'}
     },
 
 ]
@@ -26,5 +27,11 @@ const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes
 })
+
+//Hook para pegar o titulo das rotas
+router.beforeEach((to, from, next) => {
+    document.title = to.meta.title || 'App';
+    next();
+});
 
 export default router
