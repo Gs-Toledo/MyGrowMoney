@@ -54,16 +54,16 @@
         Entrar
       </v-btn>
 
-      <!-- <v-card-text class="text-center">
-        <a
+      <v-card-text class="text-center">
+        <router-link
           class="text-blue text-decoration-none"
-          href="#"
+          to="/register"
           rel="noopener noreferrer"
           target="_blank"
         >
           Cadastre-se <v-icon icon="mdi-chevron-right"></v-icon>
-        </a>
-      </v-card-text> -->
+        </router-link>
+      </v-card-text>
       <div v-if="errorMessage" class="mt-4 text-red-500">
         {{ errorMessage }}
       </div>

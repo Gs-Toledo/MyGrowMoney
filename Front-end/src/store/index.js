@@ -16,7 +16,7 @@ export default createStore({
             try {
                 const response = await AuthService.login(credentials);
                 console.log(response)
-                const token = response.access_token;
+                const token = response.accessToken;
 
                 commit('setToken', token);
 
@@ -37,7 +37,7 @@ export default createStore({
     },
     plugins: [
         createPersistedState({
-            key: 'acess_token',
+            key: 'acessToken',
             paths: ['token'],
         }),
     ],
