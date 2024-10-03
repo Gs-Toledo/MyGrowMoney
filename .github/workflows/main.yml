@@ -1,14 +1,16 @@
-name: Frontend CI Pipeline
+name: Backend CI Pipeline
 
 on:
   # Manual trigger
   workflow_dispatch:
+
   push:
     branches:
-      - '*' 
+      - '*'
+
   pull_request:
     branches:
-      - '*' 
+      - '*'
 
 jobs:
   front-end:
@@ -47,3 +49,30 @@ jobs:
       - name: Build
         working-directory: ./front-end
         run: npm run build
+
+  back-end:
+    name: Back-end
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up JDK 21 for Spring Boot
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'microsoft'
+
+      # Step 3: Cache Maven dependencies for build
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/maven
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+
+      # Step 4: Build the backend
+      - name: Build backend
+        working-directory: ./Back-end
+        run: mvn clean install
