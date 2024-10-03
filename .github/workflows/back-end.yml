@@ -39,5 +39,5 @@ jobs:
 
       # Step 4: Build the backend
       - name: Build backend
-        working-directory: ./backend
+        working-directory: ./Back-end
         run: mvn clean install
