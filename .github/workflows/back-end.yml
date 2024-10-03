@@ -13,8 +13,8 @@ on:
       - '*'
 
 jobs:
-  build:
-    name: Build
+  back-end:
+    name: Back-end
     runs-on: ubuntu-latest
     steps:
       # Step 1: Checkout the code
@@ -32,10 +32,8 @@ jobs:
       - name: Cache Maven dependencies
         uses: actions/cache@v3
         with:
-          path: ~/.m2
+          path: ~/.cache/maven
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
 
       # Step 4: Build the backend
       - name: Build backend
