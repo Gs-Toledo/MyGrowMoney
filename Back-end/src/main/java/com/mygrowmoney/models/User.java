@@ -26,6 +26,8 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    public User () {}
+
     public User (
         String name,
         String email,
@@ -34,5 +36,13 @@ public class User {
         this.name = name;
         this.email = email;
         this.password = password;
+    }
+
+    public String getEmail () {
+        return this.email;
+    }
+
+    public String getPassword () {
+        return this.password;
     }
 }
