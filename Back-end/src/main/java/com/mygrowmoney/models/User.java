@@ -1,4 +1,4 @@
-package com.mygrowmoney.model;
+package com.mygrowmoney.models;
 
 
 import jakarta.persistence.Column;
