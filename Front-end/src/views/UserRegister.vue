@@ -10,7 +10,7 @@
 
     <v-text-field
       density="compact"
-      placeholder="Insira o usuario desejado."
+      placeholder="Cadastre o usuario desejado."
       prepend-inner-icon="mdi-email-outline"
       v-model="username"
       variant="outlined"
@@ -23,15 +23,15 @@
     </div>
 
     <v-text-field
-        :append-inner-icon="isPasswordVisible ? 'mdi-eye-off' : 'mdi-eye'"
-        :type="isPasswordVisible ? 'text' : 'password'"
-        density="compact"
-        placeholder="Insira a senha"
-        prepend-inner-icon="mdi-lock-outline"
-        variant="outlined"
-        @click:append-inner="isPasswordVisible = !isPasswordVisible"
-        v-model="password"
-      ></v-text-field>
+      :append-inner-icon="isPasswordVisible ? 'mdi-eye-off' : 'mdi-eye'"
+      :type="isPasswordVisible ? 'text' : 'password'"
+      density="compact"
+      placeholder="Cadastre a senha desejada"
+      prepend-inner-icon="mdi-lock-outline"
+      variant="outlined"
+      @click:append-inner="isPasswordVisible = !isPasswordVisible"
+      v-model="password"
+    ></v-text-field>
 
     <div
       class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between"
@@ -60,10 +60,10 @@
       Cadastrar
     </v-btn>
 
-    <!--    <router-link to="/login" class="text-blue-500 hover:underline">
+    <router-link to="/login" class="text-blue-500 hover:underline">
       Voltar para Login
     </router-link>
- -->
+
     <div v-if="errorMessage" class="mt-4 text-red-500">
       {{ errorMessage }}
     </div>
