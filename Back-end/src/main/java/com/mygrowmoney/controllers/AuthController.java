@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+
 import com.mygrowmoney.services.AuthService;
 
 import java.util.HashMap;
+
 
 @RestController
 public class AuthController {
@@ -24,45 +27,53 @@ public class AuthController {
 
 
     @PostMapping(value = "/sign-in", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> signIn (@RequestBody HashMap<String, String> body) {
+    public ResponseEntity<String> signIn (@RequestBody HashMap<String, String> body) {
         String email = body.get("email");
         String password = body.get("password");
 
-        System.out.println(email);
-        System.out.println(password);
+        System.out.println("Email: " + email);
+        System.out.println("Password: " + password);
 
-        Authentication authenticationRequest =
-			UsernamePasswordAuthenticationToken.unauthenticated(
-                email,
-                password
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                UsernamePasswordAuthenticationToken.unauthenticated(email, password)
             );
 
-        Authentication authenticationResponse =
-			this.authenticationManager.authenticate(authenticationRequest);
-
-
-        System.out.println(authenticationResponse.getPrincipal().toString());
-
-        return ResponseEntity.ok().build();
-
-        // try {
-        //     auth.signIn(email, password);
-
-        //     return ResponseEntity.status(HttpStatus.OK).build();
-        // } catch (Exception ex) {
-        //     System.out.println(ex.getMessage());
-
-        //     return ResponseEntity.status(HttpStatus.OK).build();
-        // }
+            return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("" + authentication.isAuthenticated());
+        } catch (AuthenticationException exception) {
+            return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
+        } catch (Exception exception) {
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(exception.getMessage());
+        }
     }
 
     @PostMapping(value = "/sign-up")
-    public void signUp (@RequestBody HashMap<String, String> body) {
+    public ResponseEntity<String> signUp (@RequestBody HashMap<String, String> body) {
         String name = body.get("name");
         String email = body.get("email");
         String password = body.get("password");
 
-        auth.signUp(name, email, password);
+        System.out.println("Email: " + email);
+        System.out.println("Password: " + password);
+        System.out.println("Name: " + name);
+
+        try {
+            auth.signUp(name, email, password);
+
+            return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .build();
+        } catch (Exception exception) {
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(exception.getMessage());
+        }
     }
 
     @PostMapping(value = "/sign-out")

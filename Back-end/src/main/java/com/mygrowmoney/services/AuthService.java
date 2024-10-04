@@ -14,11 +14,11 @@ public class AuthService {
         String name,
         String email,
         String password
-    ) {
+    ) throws AuthServiceException {
         User userFoundByEmail = userRepository.findByEmail(email);
 
         if (userFoundByEmail != null) {
-            throw new RuntimeException("Email already registered: " + email);
+            throw new AuthServiceException("Email already registered: " + email);
         }
 
         User user = new User(
@@ -30,14 +30,19 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    public User signIn (String email, String password) {
+    public User signIn (String email, String password) throws AuthServiceException {
         User user = userRepository.findByEmail(email);
 
         if (user == null) {
-            throw new RuntimeException("User was not found: " + email);
+            throw new AuthServiceException("User was not found: " + email);
         }
 
         return user;
     }
-    
+
+    public static class AuthServiceException extends Exception {
+        public AuthServiceException (String message) {
+            super(message);
+        }
+    }
 }
