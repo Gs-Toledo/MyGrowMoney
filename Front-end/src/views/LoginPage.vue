@@ -12,13 +12,13 @@
       max-width="448"
       rounded="lg"
     >
-      <div class="text-subtitle-1 text-medium-emphasis">Login</div>
+      <div class="text-subtitle-1 text-medium-emphasis">Email</div>
 
       <v-text-field
         density="compact"
-        placeholder="Insira o Login"
+        placeholder="Insira o Email"
         prepend-inner-icon="mdi-email-outline"
-        v-model="username"
+        v-model="email"
         variant="outlined"
       ></v-text-field>
 
@@ -76,7 +76,7 @@ import { mapActions } from "vuex";
 export default {
   data() {
     return {
-      username: "",
+      email: "",
       password: "",
       errorMessage: "",
       isSendingRequest: false,
@@ -88,7 +88,7 @@ export default {
     async executeLogin() {
       this.isSendingRequest = true;
       try {
-        const loginData = { user: this.username, pass: this.password };
+        const loginData = { email: this.email, password: this.password };
         await this.login(loginData);
         this.$router.push("/home");
       } catch (error) {
