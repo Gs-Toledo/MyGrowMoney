@@ -1,7 +1,7 @@
-package com.exemplo.service;
+package com.mygrowmoney.service;
 
-import com.exemplo.model.User;
-import com.exemplo.repository.UserRepository;
+import com.mygrowmoney.model.User;
+import com.mygrowmoney.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
