@@ -23,13 +23,15 @@
     </div>
 
     <v-text-field
-      type="password"
-      density="compact"
-      placeholder="Insira a senha"
-      prepend-inner-icon="mdi-lock-outline"
-      variant="outlined"
-      v-model="password"
-    ></v-text-field>
+        :append-inner-icon="isPasswordVisible ? 'mdi-eye-off' : 'mdi-eye'"
+        :type="isPasswordVisible ? 'text' : 'password'"
+        density="compact"
+        placeholder="Insira a senha"
+        prepend-inner-icon="mdi-lock-outline"
+        variant="outlined"
+        @click:append-inner="isPasswordVisible = !isPasswordVisible"
+        v-model="password"
+      ></v-text-field>
 
     <div
       class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between"
@@ -79,6 +81,7 @@ export default {
       confirmPassword: "",
       errorMessage: "",
       isSendingRequest: false,
+      isPasswordVisible: false,
     };
   },
   methods: {
