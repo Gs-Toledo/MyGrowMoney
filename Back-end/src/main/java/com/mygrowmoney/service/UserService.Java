@@ -15,5 +15,12 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User loginUser(String username, String password) {
+        User user = userRepository.findByUsername(username);
+        if (user != null && user.getPassword().equals(password)) {
+            return user;
+        }
+        return null;
+    }
     
 }
