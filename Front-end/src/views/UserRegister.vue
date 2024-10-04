@@ -6,13 +6,13 @@
   ></v-img>
 
   <v-card class="mx-auto pa-12 pb-8" elevation="8" max-width="448" rounded="lg">
-    <div class="text-subtitle-1 text-medium-emphasis">Usuario</div>
+    <div class="text-subtitle-1 text-medium-emphasis">Email</div>
 
     <v-text-field
       density="compact"
-      placeholder="Cadastre o usuario desejado."
+      placeholder="Insira o Email desejado."
       prepend-inner-icon="mdi-email-outline"
-      v-model="username"
+      v-model="email"
       variant="outlined"
     ></v-text-field>
 
@@ -76,7 +76,7 @@ import AuthService from "@/services/AuthService";
 export default {
   data() {
     return {
-      username: "",
+      email: "",
       password: "",
       confirmPassword: "",
       errorMessage: "",
@@ -95,8 +95,8 @@ export default {
       this.isSendingRequest = true;
       try {
         const accountData = {
-          user: this.username,
-          pass: this.password,
+          email: this.email,
+          password: this.password,
         };
 
         await AuthService.createAccount(accountData);

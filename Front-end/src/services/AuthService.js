@@ -5,14 +5,14 @@ class AuthService {
     static async login(loginData) {
         try {
 
-            if (isEmpty(loginData.user) || isEmpty(loginData.pass)) {
+            if (isEmpty(loginData.email) || isEmpty(loginData.password)) {
                 throw new ValidationError('Usuario ou senha não podem estar vazios.');
             }
 
             const bodyParams =
             {
-                user: loginData.user,
-                pass: loginData.pass
+                email: loginData.email,
+                password: loginData.password
             }
 
             const response = await axios.post('http://localhost:8081/api/login', bodyParams);
@@ -25,14 +25,14 @@ class AuthService {
 
     static async createAccount(accountData) {
         try {
-            if (isEmpty(accountData.user) || isEmpty(accountData.pass)) {
+            if (isEmpty(accountData.email) || isEmpty(accountData.password)) {
                 throw new ValidationError('Usuario ou senha não podem estar vazios.');
             }
 
             const bodyParams =
             {
-                user: loginData.user,
-                pass: loginData.pass
+                email: loginData.email,
+                password: loginData.password
             }
 
             const response = await axios.post('http://localhost:8081/api/cadastro', bodyParams);
