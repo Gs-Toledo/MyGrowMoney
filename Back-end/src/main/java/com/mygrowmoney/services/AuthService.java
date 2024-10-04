@@ -7,20 +7,37 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
-
     @Autowired
     private UserRepository userRepository;
 
-    public User registerUser(User user) {
+    public User signUp (
+        String name,
+        String email,
+        String password
+    ) {
+        User userFoundByEmail = userRepository.findByEmail(email);
+
+        if (userFoundByEmail != null) {
+            throw new RuntimeException("Email already registered: " + email);
+        }
+
+        User user = new User(
+            name,
+            email,
+            password
+        );
+
         return userRepository.save(user);
     }
 
-    public User loginUser(String username, String password) {
-        User user = userRepository.findByUsername(username);
-        if (user != null && user.getPassword().equals(password)) {
-            return user;
+    public User signIn (String email, String password) {
+        User user = userRepository.findByEmail(email);
+
+        if (user == null) {
+            throw new RuntimeException("User was not found: " + email);
         }
-        return null;
+
+        return user;
     }
     
 }
