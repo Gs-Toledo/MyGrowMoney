@@ -59,7 +59,6 @@
           class="text-blue text-decoration-none"
           to="/register"
           rel="noopener noreferrer"
-          target="_blank"
         >
           Cadastre-se <v-icon icon="mdi-chevron-right"></v-icon>
         </router-link>
