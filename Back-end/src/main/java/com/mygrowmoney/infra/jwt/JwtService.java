@@ -32,6 +32,10 @@ public class JwtService {
     }
 
     public String encode (String subject) {
+        if (subject == null || subject.isEmpty()) {
+            throw new IllegalArgumentException("Subject cannot be null or empty.");
+        }
+
         return new DefaultJwtBuilder()
             .subject(subject)
             .issuedAt(new Date(System.currentTimeMillis()))
@@ -41,12 +45,22 @@ public class JwtService {
     }
 
     public String decode (String token) {
-        return new DefaultJwtParserBuilder()
+        if (token == null || token.isEmpty()) {
+            throw new IllegalArgumentException("Token cannot be null or empty.");
+        }
+
+        String subject = new DefaultJwtParserBuilder()
             .setSigningKey(getSignInKey())
             .build()
-            .parseUnsecuredClaims(token)
+            .parseSignedClaims(token)
             .getPayload()
             .getSubject();
+
+        if (subject == null || subject.isEmpty()) {
+            throw new IllegalStateException("Token does not have a valid subject claim.");
+        }
+
+        return subject;
     }
 
     public static class JwtToken {}
