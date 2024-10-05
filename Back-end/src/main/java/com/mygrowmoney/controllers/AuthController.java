@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.AuthenticationException;
 
 import com.mygrowmoney.AuthenticationService;
-import com.mygrowmoney.JwtService;
+import com.mygrowmoney.infra.jwt.JwtService;
 import com.mygrowmoney.models.User;
 
 import java.util.HashMap;
@@ -31,7 +31,7 @@ public class AuthController {
         try {
             User user = auth.signIn(email, password);
 
-            String jwtToken = jwtService.generateToken(user.toDetails());
+            String jwtToken = jwtService.encode(user.getEmail());
 
             return ResponseEntity
                 .status(HttpStatus.OK)
@@ -47,7 +47,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping(value = "/sign-up")
+    @PostMapping(value = "/sign-up", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> signUp (@RequestBody HashMap<String, String> body) {
         String name = body.get("name");
         String email = body.get("email");

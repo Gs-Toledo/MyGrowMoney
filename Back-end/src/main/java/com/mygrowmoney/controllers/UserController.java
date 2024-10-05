@@ -2,6 +2,8 @@ package com.mygrowmoney.controllers;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,11 +17,19 @@ import com.mygrowmoney.models.User;
 @RestController
 public class UserController {
     @GetMapping("/me")
-    public ResponseEntity<User> authenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        User currentUser = (User) authentication.getPrincipal();
-
-        return ResponseEntity.ok(currentUser);
+    public ResponseEntity<String> authenticatedUser() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    
+            String email = (String) authentication.getPrincipal();
+    
+            return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(email);
+        } catch (Exception ex) {
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build();
+        }
     }
 }
