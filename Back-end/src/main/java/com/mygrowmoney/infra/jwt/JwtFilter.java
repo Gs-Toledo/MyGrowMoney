@@ -4,6 +4,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import org.hibernate.mapping.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,27 +15,25 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException.Forbidden;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.HandlerExceptionResolver;
+
+import com.mygrowmoney.models.User;
+import com.mygrowmoney.repositories.UserRepository;
+
+import io.jsonwebtoken.lang.Arrays;
+import io.jsonwebtoken.lang.Collections;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-    private final HandlerExceptionResolver handlerExceptionResolver;
+    @Autowired
+    private JwtService jwtService;
 
-    private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
-
-    public JwtFilter(
-        JwtService jwtService,
-        UserDetailsService userDetailsService,
-        HandlerExceptionResolver handlerExceptionResolver
-    ) {
-        this.jwtService = jwtService;
-        this.userDetailsService = userDetailsService;
-        this.handlerExceptionResolver = handlerExceptionResolver;
-    }
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(
@@ -44,34 +45,30 @@ public class JwtFilter extends OncePerRequestFilter {
 
         System.out.println("Authorization: " + authorizationHeader);
         
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        try {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             final String jwtToken = authorizationHeader.substring(7);
             final String jwtSubject = jwtService.decode(jwtToken);
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (jwtSubject != null && authentication == null) {
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(jwtSubject);
+                UUID userId = UUID.fromString(jwtSubject);
+
+                User user = this.userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalStateException("User not found: " + userId + "."));
 
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    userDetails.getUsername(),
-                    userDetails.getPassword(),
-                    userDetails.getAuthorities()
+                    user.getId(),
+                    user.getPassword(),
+                    Collections.emptyList()
                 );
 
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                // authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
-
-            filterChain.doFilter(request, response);
-        } catch (Exception exception) {
-            throw exception;
         }
+
+        filterChain.doFilter(request, response);
     }
 }
