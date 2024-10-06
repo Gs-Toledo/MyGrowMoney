@@ -1,17 +1,13 @@
 package com.mygrowmoney;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,14 +25,16 @@ public class ApplicationConfiguration {
 
     @Bean
     UserDetailsService userDetailsService() {
-        return username -> {
-            User user = userRepository.findByEmail(username);
+        return new UserDetailsService () {
+            public UserDetails loadUserByUsername (String username) {
+                User user = userRepository.findByEmail(username);
 
-            if (user == null) {
-                throw new UsernameNotFoundException("User not found: "+ username);
+                if (user == null) {
+                    throw new UsernameNotFoundException("User not found: " + username);
+                }
+
+                return user.toDetails();
             }
-
-            return user.toDetails();
         };
     }
 
