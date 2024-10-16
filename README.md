@@ -65,41 +65,22 @@ Follow the instructions below to run the back-end in a GitHub Codespace or local
 1. Create a GitHub Codespace in this repository.
 2. Wait for Visual Studio Code in the Codespace to fully set up.
 3. In Visual Studio Code, open the Terminal.
-4. Change the active Java version to 21 using SDK MAN:
-    ```bash
-    sdk use java 21.0.4-ms
-    ```
-
-5. Optionally, check the current Java version:
-    ```bash
-    java --version
-    ```
-    The output should look similar to this:
-    ```bash
-    openjdk 21.0.4 2024-07-16 LTS
-    OpenJDK Runtime Environment Microsoft-9889606 (build 21.0.4+7-LTS)
-    OpenJDK 64-Bit Server VM Microsoft-9889606 (build 21.0.4+7-LTS, mixed mode, sharing)
-    ```
-6. Change to the `back-end` directory:
+4. Change to the `back-end` directory:
     ```bash
     cd Back-end
     ```
-7. Start the application:
+5. Setup the application:
     ```bash
-    mvn spring-boot:run
+    source ./setup.sh
     ```
-    By default, the application will run on port `8080`.
-7. You're Ready! The back-end is now running, and you can start using the application at http://localhost:8080.
+6. Run the application:
+    ```bash
+    source ./run.sh
+    ```
+    By default, the application will run on port `5000`.
+7. You're Ready! The back-end is now running, and you can start using the application at http://127.0.0.1:5000.
 
 ### Local
-
-To run the back-end locally, ensure that you have Java 21 installed. You can use any OpenJDK distribution. Below are a few popular options:
-
-- [Microsoft OpenJDK 21](https://learn.microsoft.com/en-us/java/openjdk/download#openjdk-21)
-- [Amazon Corretto 21](https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/downloads-list.html)
-- [Oracle JDK 21](https://www.oracle.com/br/java/technologies/downloads/#java21)
-
-Once you have Java 21 installed, follow these steps to run the back-end:
 
 1. Clone the repository.
 
@@ -107,16 +88,16 @@ Once you have Java 21 installed, follow these steps to run the back-end:
     ```bash
     cd Back-end
     ```
-
-3. Start the application:
-
+3. Setup the application:
     ```bash
-    mvn spring-boot:run
+    source ./setup.sh
     ```
-
-    By default, the application will run on port 8080.
-
-4. You're Ready! The back-end is now running, and you can start using the application at http://localhost:8080.
+4. Run the application:
+    ```bash
+    source ./run.sh
+    ```
+    By default, the application will run on port `5000`.
+5. You're Ready! The back-end is now running, and you can start using the application at http://127.0.0.1:5000.
 
 ## Notes
 
