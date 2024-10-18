@@ -15,7 +15,7 @@ class AuthService {
                 password: loginData.password
             }
 
-            const response = await axios.post('http://localhost:8081/api/login', bodyParams);
+            const response = await axios.post('http://localhost:5000/api/login', bodyParams);
             return response.data;
         } catch (error) {
             console.error('Erro ao realizar o login:', error);
@@ -35,7 +35,7 @@ class AuthService {
                 password: loginData.password
             }
 
-            const response = await axios.post('http://localhost:8081/api/cadastro', bodyParams);
+            const response = await axios.post('http://localhost:5000/api/cadastro', bodyParams);
             return response.data;
         } catch (error) {
             console.error('Erro ao realizar o Cadastro:', error);
