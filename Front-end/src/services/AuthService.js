@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { isEmpty } from '../utils/validationUtils';
+import axiosMyGrowMoney from './axios-configs';
 
 class AuthService {
     static async login(loginData) {
@@ -15,7 +15,7 @@ class AuthService {
                 password: loginData.password
             }
 
-            const response = await axios.post('http://localhost:5000/api/login', bodyParams);
+            const response = await axiosMyGrowMoney.post('/sign-in', bodyParams);
             return response.data;
         } catch (error) {
             console.error('Erro ao realizar o login:', error);
@@ -31,11 +31,11 @@ class AuthService {
 
             const bodyParams =
             {
-                email: loginData.email,
-                password: loginData.password
+                email: accountData.email,
+                password: accountData.password
             }
 
-            const response = await axios.post('http://localhost:5000/api/cadastro', bodyParams);
+            const response = await axiosMyGrowMoney.post('/sign-up', bodyParams);
             return response.data;
         } catch (error) {
             console.error('Erro ao realizar o Cadastro:', error);
