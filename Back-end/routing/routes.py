@@ -6,7 +6,8 @@ from services.sign_up import *
 from services.sign_in import *
 from routing.schemas import *
 
-def register_routes (app):
+
+def register_routes(app):
     jwt = JWTManager(app)
     bcrypt = Bcrypt(app)
 
@@ -68,4 +69,4 @@ def register_routes (app):
     @jwt_required()
     def get_user_route(user_id):
         return jsonify(userId=user_id), 200
-    
+
