@@ -1,12 +1,15 @@
 from flask import *
+from flask_cors import CORS
 
 from services.exception import ServiceException
 from services.sign_up import SignUpServiceException
 from routing.routes import register_routes
 
 app = Flask(__name__)
+CORS(app)
 
-app.config["JWT_SECRET_KEY"] = "83559534b5a4dc267054fcbb19abaa21d5922e7e14f7ffba442d74b80f861caf"
+app.config["JWT_SECRET_KEY"] = "83559534b5a4dc267054fcbb19abaa21d5922e7e14f7ffba442d74b80f861caf" # noqa
+
 
 @app.errorhandler(Exception)
 def handle_exception(e):
