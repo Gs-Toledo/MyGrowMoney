@@ -6,6 +6,17 @@
   ></v-img>
 
   <v-card class="mx-auto pa-12 pb-8" elevation="8" max-width="448" rounded="lg">
+    
+    <div class="text-subtitle-1 text-medium-emphasis">Nome</div>
+
+    <v-text-field
+      density="compact"
+      placeholder="Insira o Nome desejado."
+      prepend-inner-icon="mdi-account-outline"
+      v-model="name"
+      variant="outlined"
+    ></v-text-field>
+
     <div class="text-subtitle-1 text-medium-emphasis">Email</div>
 
     <v-text-field
@@ -77,6 +88,7 @@ export default {
   data() {
     return {
       email: "",
+      name: "",
       password: "",
       confirmPassword: "",
       errorMessage: "",
@@ -95,6 +107,7 @@ export default {
       this.isSendingRequest = true;
       try {
         const accountData = {
+          name: this.name,
           email: this.email,
           password: this.password,
         };
