@@ -3,6 +3,7 @@ import store from '@/store';
 import LoginPage from '@/views/LoginPage.vue';
 import UserRegister from '@/views/UserRegister.vue';
 import HomePage from '@/views/HomePage.vue'
+import ErrorPage from '@/views/ErrorPage.vue';
 
 const routes = [
     {
@@ -15,6 +16,26 @@ const routes = [
                 next('/login');
             }
         }
+    },
+    {
+        path: '/:catchAll(.*)',
+        name: 'NotFound',
+        component: ErrorPage,
+        props: {
+            errorCode: 404,
+            errorMessage: 'A página que você está procurando não foi encontrada.',
+        },
+        meta: { title: 'Erro 404 - Não Encontrado' }
+    },
+    {
+        path: '/forbidden',
+        name: 'Forbidden',
+        component: ErrorPage,
+        props: {
+            errorCode: 403,
+            errorMessage: 'Você não tem permissão para acessar esta página.',
+        },
+        meta: { title: 'Erro 403 - Proibido' }
     },
     {
         path: '/login',
