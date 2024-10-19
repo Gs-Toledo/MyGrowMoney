@@ -2,7 +2,7 @@
   <v-app>
     <base-header />
     <v-main>
-      <v-container class="fill-height justify-center">
+      <v-container>
         <slot></slot>
       </v-container>
     </v-main>
