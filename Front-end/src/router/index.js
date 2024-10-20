@@ -4,6 +4,7 @@ import LoginPage from '@/views/LoginPage.vue';
 import UserRegister from '@/views/UserRegister.vue';
 import HomePage from '@/views/HomePage.vue'
 import ErrorPage from '@/views/ErrorPage.vue';
+import CadastroReceitasDespesasPage from '@/views/CadastroReceitasDespesasPage.vue';
 
 const routes = [
     {
@@ -54,6 +55,12 @@ const routes = [
         name: 'Home',
         component: HomePage,
         meta: { title: 'Home' }
+    },
+    {
+        path: '/receitas-despesas',
+        name: 'CadastrarReceitasDespesas',
+        component: CadastroReceitasDespesasPage,
+        meta: { title: 'Receitas e Despesas' }
     }
 
 ]
