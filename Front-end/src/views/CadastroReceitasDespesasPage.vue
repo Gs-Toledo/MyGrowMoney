@@ -12,7 +12,13 @@
       <v-col>
         <v-date-input label="Data" v-model="form.data"></v-date-input>
 
-        <v-select label="Categoria" :items="categorias" v-model="form.categoria"></v-select>
+        <v-select
+          label="Categoria"
+          :items="categorias"
+          item-title="nome"
+          item-value="valor"
+          v-model="form.categoria"
+        ></v-select>
       </v-col>
     </v-row>
     <v-row>
@@ -45,10 +51,10 @@ export default {
         tipo: 'receita'
       },
       categorias: [
-        { text: 'Alimentação', value: 'alimentacao' },
-        { text: 'Transporte', value: 'transporte' },
-        { text: 'Saúde', value: 'saude' },
-        { text: 'Lazer', value: 'lazer' }
+        { nome: 'Alimentação', valor: 'alimentacao' },
+        { nome: 'Transporte', valor: 'transporte' },
+        { nome: 'Saúde', valor: 'saude' },
+        { nome: 'Lazer', valor: 'lazer' }
       ]
     }
   },
