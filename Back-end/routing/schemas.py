@@ -1,7 +1,8 @@
-from flask import *
-from functools import *
-from marshmallow import *
-from marshmallow.validate import *
+from flask import request, jsonify
+from functools import wraps
+from marshmallow import Schema, fields, ValidationError
+from marshmallow.validate import Length
+
 
 # Validate a Flask Request using a Marshmallow Schema
 def schema(schema_class):
@@ -14,19 +15,20 @@ def schema(schema_class):
             try:
                 schema.load(json)
             except ValidationError as err:
-                return jsonify(success = False, errors = err.messages), 400
+                return jsonify(success=False, errors=err.messages), 400
 
             return f(*args, **kwargs)
-        
+
         return decorated_function
     return decorator
 
+
 class SignInSchema(Schema):
     email = fields.Email(required=True)
-    password = fields.Str(required=True, validate=Length(min = 3))
+    password = fields.Str(required=True, validate=Length(min=3))
+
 
 class SignUpSchema(Schema):
     name = fields.Str(required=True)
     email = fields.Email(required=True)
-    password = fields.Str(required=True, validate=Length(min = 3))
-
+    password = fields.Str(required=True, validate=Length(min=3))
