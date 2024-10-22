@@ -59,9 +59,15 @@ export default {
     }
   },
   methods: {
-    postCadastrarReceitaDespesa() {
+    async postCadastrarReceitaDespesa() {
       console.log('Teste de Formulário enviado:', this.form)
+    },
+    async getCategoriasCadastradasCliente() {
+      console.log('em construcao, chamar categorias do cliente')
     }
+  },
+  async mounted() {
+    await this.getCategoriasCadastradasCliente()
   }
 }
 </script>
