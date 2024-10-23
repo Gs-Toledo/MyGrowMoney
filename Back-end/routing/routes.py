@@ -5,6 +5,9 @@ from flask_jwt_extended import (
     get_jwt_identity, jwt_required
 )
 
+from data.transactions import Transaction
+from data.categories import Category
+from data.users import User
 from services.sign_up import sign_up
 from services.sign_in import sign_in
 from routing.schemas import SignInSchema, SignUpSchema, schema
@@ -60,7 +63,56 @@ def register_routes(app: Flask):
         current_user = get_jwt_identity()
         return jsonify(userId=current_user), 200
 
-    @app.route("/users/<user_id>/transactions", methods=["GET"])
+        
+    @app.route("/transactions", methods=["POST"])
     @jwt_required()
-    def get_user_route(user_id):
-        return jsonify(userId=user_id), 200
+    def create_transaction():
+        user_id = get_jwt_identity()
+        user = User.get_by_id(user_id)
+
+        category_id = request.json.get("category_id")
+        value = request.json.get("value")
+        date = request.json.get("date")
+        description = request.json.get("description")
+        is_recurring = request.json.get("is_recurring", False)
+
+        Transaction.create(
+            user=user,
+            category=Category.get_by_id(category_id),
+            value=value,
+            date=date,
+            description=description,
+            is_recurring=is_recurring
+        )
+
+        return jsonify(success=True), 200
+
+    @app.route("/transactions/<id>", methods=["DELETE"])
+    @jwt_required()
+    def delete_transaction(id):
+        transaction = Transaction.get_by_id(id)
+        transaction.delete_instance()
+        return jsonify(success=True), 200
+
+    @app.route("/categories", methods=["POST"])
+    @jwt_required()
+    def create_category():
+        name = request.json.get("name")
+        Category.create(name=name)
+        return jsonify(success=True), 200
+
+    @app.route("/categories/<id>", methods=["PUT"])
+    @jwt_required()
+    def update_category(id):
+        category = Category.get_by_id(id)
+        category.name = request.json.get("name")
+        category.save()
+        return jsonify(success=True), 200
+
+    @app.route("/categories/<id>", methods=["DELETE"])
+    @jwt_required()
+    def delete_category(id):
+        category = Category.get_by_id(id)
+        category.delete_instance()
+        return jsonify(success=True), 200
+
