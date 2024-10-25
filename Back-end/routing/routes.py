@@ -96,7 +96,10 @@ def register_routes(app: Flask):
         description = request.json.get("description")
         is_recurring = request.json.get("is_recurring", False)
 
-        category = Category.get_by_id(category_id)
+        category = Category.get_or_none(category_id)
+
+        if category is None:
+            return jsonify(success=False, message="Category was not found"), 400
 
         transaction = Transaction.create(
             id=uuid4(),
