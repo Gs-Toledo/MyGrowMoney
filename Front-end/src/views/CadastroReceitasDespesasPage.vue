@@ -15,8 +15,8 @@
         <v-select
           label="Categoria"
           :items="categorias"
-          item-title="nome"
-          item-value="valor"
+          item-title="name"
+          item-value="id"
           v-model="form.categoria"
         ></v-select>
       </v-col>
@@ -28,12 +28,20 @@
       </v-radio-group>
     </v-row>
 
-    <v-btn class="mt-4" type="button" @click="postCadastrarReceitaDespesa"> Enviar </v-btn>
+    <v-btn
+      class="mt-4"
+      :disabled="isSendingRequest"
+      type="button"
+      @click="postCadastrarReceitaDespesa"
+    >
+      Enviar
+    </v-btn>
   </base-user-template>
 </template>
 
 <script>
 import BaseUserTemplate from '@/components/baseUser/BaseUserTemplate.vue'
+import axiosMyGrowMoney from '@/services/axios-configs'
 import { VDateInput } from 'vuetify/labs/VDateInput'
 
 export default {
@@ -50,20 +58,37 @@ export default {
         categoria: null,
         tipo: 'receita'
       },
-      categorias: [
-        { nome: 'Alimentação', valor: 'alimentacao' },
-        { nome: 'Transporte', valor: 'transporte' },
-        { nome: 'Saúde', valor: 'saude' },
-        { nome: 'Lazer', valor: 'lazer' }
-      ]
+      categorias: [],
+      isSendingRequest: false
     }
   },
   methods: {
     async postCadastrarReceitaDespesa() {
       console.log('Teste de Formulário enviado:', this.form)
+
+      let url = '/transactions'
+      this.isSendingRequest = true
+      try {
+        await axiosMyGrowMoney.post(url, this.form)
+        alert('Cadastro realizado com sucesso!')
+      } catch (error) {
+        console.error('Erro ao cadastrar', error)
+        alert('Erro no cadastro')
+      } finally {
+        this.isSendingRequest = false
+      }
     },
     async getCategoriasCadastradasCliente() {
-      console.log('em construcao, chamar categorias do cliente')
+      let url = '/categories'
+
+      try {
+        const response = await axiosMyGrowMoney(url)
+        console.log('categorias novas', response.data)
+
+        this.categorias = response.data.categorias
+      } catch (error) {
+        console.error(error)
+      }
     }
   },
   async mounted() {
