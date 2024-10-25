@@ -6,7 +6,7 @@ class AuthService {
         try {
 
             if (isEmpty(loginData.email) || isEmpty(loginData.password)) {
-                throw new ValidationError('Usuario ou senha não podem estar vazios.');
+                throw new Error('Usuario ou senha não podem estar vazios.');
             }
 
             const bodyParams =
@@ -26,7 +26,7 @@ class AuthService {
     static async createAccount(accountData) {
         try {
             if (isEmpty(accountData.email) || isEmpty(accountData.password) || isEmpty(accountData.name)) {
-                throw new ValidationError('Usuario ou senha não podem estar vazios.');
+                throw new Error('Usuario ou senha não podem estar vazios.');
             }
 
             const bodyParams =
