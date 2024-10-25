@@ -7,7 +7,7 @@ class Category(Model):
     class Meta:
         database = database
 
-    id = UUIDField(default=uuid4(), primary_key=True)
+    id = UUIDField(primary_key=True)
     name = CharField()  # Nome da categoria
 
 

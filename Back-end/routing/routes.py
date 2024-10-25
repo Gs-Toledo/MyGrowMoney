@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from flask import Flask, request, jsonify
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import (
@@ -97,6 +99,7 @@ def register_routes(app: Flask):
         category = Category.get_by_id(category_id)
 
         transaction = Transaction.create(
+            id=uuid4(),
             user=user,
             category=category,
             value=value,
@@ -137,7 +140,10 @@ def register_routes(app: Flask):
     def create_category():
         name = request.json.get("name")
 
-        category = Category.create(name=name)
+        category = Category.create(
+            id=uuid4(),
+            name=name
+        )
 
         return jsonify(success=True, categoryId=category.id), 200
 
