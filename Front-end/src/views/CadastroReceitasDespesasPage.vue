@@ -3,26 +3,26 @@
     <h2 class="mb-3 font-weight-bold text-lg">Cadastro de Receitas/Despesas</h2>
     <v-row>
       <v-col>
-        <v-textarea label="Descrição" v-model="form.descricao"></v-textarea>
+        <v-textarea label="Descrição" v-model="form.description"></v-textarea>
 
-        <v-text-field label="Valor" prefix="R$" v-model="form.valor" type="number"></v-text-field>
+        <v-text-field label="Valor" prefix="R$" v-model="form.value" type="number"></v-text-field>
       </v-col>
     </v-row>
     <v-row>
       <v-col>
-        <v-date-input label="Data" v-model="form.data"></v-date-input>
+        <v-date-input label="Data" v-model="form.date"></v-date-input>
 
         <v-select
           label="Categoria"
           :items="categorias"
           item-title="name"
           item-value="id"
-          v-model="form.categoria"
+          v-model="form.categoryId"
         ></v-select>
       </v-col>
     </v-row>
     <v-row>
-      <v-radio-group v-model="form.tipo">
+      <v-radio-group v-model="form.type">
         <v-radio label="Receita" value="receita"></v-radio>
         <v-radio label="Despesa" value="despesa"></v-radio>
       </v-radio-group>
@@ -52,11 +52,11 @@ export default {
   data() {
     return {
       form: {
-        descricao: '',
-        valor: null,
-        data: null,
-        categoria: null,
-        tipo: 'receita'
+        description: '',
+        value: null,
+        date: null,
+        categoryId: null,
+        type: 'receita'
       },
       categorias: [],
       isSendingRequest: false
@@ -69,11 +69,16 @@ export default {
       let url = '/transactions'
       this.isSendingRequest = true
       try {
-        await axiosMyGrowMoney.post(url, this.form)
+        await axiosMyGrowMoney.post(url, {
+          ...this.form,
+          date: this.form.date.toISOString(),
+        })
+
         alert('Cadastro realizado com sucesso!')
       } catch (error) {
         console.error('Erro ao cadastrar', error)
-        alert('Erro no cadastro')
+        
+        alert('Erro no cadastro: ' + error?.response?.data.message)
       } finally {
         this.isSendingRequest = false
       }
@@ -85,7 +90,7 @@ export default {
         const response = await axiosMyGrowMoney(url)
         console.log('categorias novas', response.data)
 
-        this.categorias = response.data.categorias
+        this.categorias = response.data.categories
       } catch (error) {
         console.error(error)
       }
