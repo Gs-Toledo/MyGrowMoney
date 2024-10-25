@@ -5,13 +5,11 @@ from data.database import database
 from data.users import User
 from data.categories import Category
 
-
-
 class Transaction(Model):
     class Meta:
         database = database
 
-    id = UUIDField(default=uuid4(), primary_key=True)
+    id = UUIDField(primary_key=True)
     user = ForeignKeyField(User, backref='transactions')
 
     category = ForeignKeyField(Category, backref='transactions')

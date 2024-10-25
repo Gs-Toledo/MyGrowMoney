@@ -10,7 +10,9 @@
       <router-link class="text-black" to="/receitas-despesas"
         ><v-list-item prepend-icon="mdi-piggy-bank-outline" title="Receitas/Despesas"></v-list-item
       ></router-link>
-      <v-list-item prepend-icon="mdi-account-multiple" title="Sessão 2"></v-list-item>
+      <router-link class="text-black" to="/categorias">
+        <v-list-item prepend-icon="mdi-account-multiple" title="Categorias"></v-list-item>
+      </router-link>
       <v-list-item prepend-icon="mdi-star" title="Sessão 3"></v-list-item>
     </v-list>
   </v-navigation-drawer>

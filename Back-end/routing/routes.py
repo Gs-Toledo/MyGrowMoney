@@ -1,7 +1,9 @@
+from uuid import uuid4
+
 from flask import Flask, request, jsonify
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import (
-    JWTManager, create_access_token, create_refresh_token, 
+    JWTManager, create_access_token, create_refresh_token,
     get_jwt_identity, jwt_required
 )
 
@@ -12,6 +14,7 @@ from services.sign_up import sign_up
 from services.sign_in import sign_in
 from routing.schemas import SignInSchema, SignUpSchema, schema
 from routing.dtos import to_transaction_dto, to_transactions_dto, to_category_dto, to_categories_dto
+
 
 def register_routes(app: Flask):
     jwt = JWTManager(app)
@@ -80,7 +83,7 @@ def register_routes(app: Flask):
         transaction_dto = to_transaction_dto(transaction)
 
         return jsonify(success=True, transaction=transaction_dto)
-        
+
     @app.route("/transactions", methods=["POST"])
     @jwt_required()
     def create_transaction():
@@ -96,6 +99,7 @@ def register_routes(app: Flask):
         category = Category.get_by_id(category_id)
 
         transaction = Transaction.create(
+            id=uuid4(),
             user=user,
             category=category,
             value=value,
@@ -104,7 +108,7 @@ def register_routes(app: Flask):
             is_recurring=is_recurring
         )
 
-        return jsonify(success=True,transactionId=transaction.id), 200
+        return jsonify(success=True, transactionId=transaction.id), 200
 
     @app.route("/transactions/<id>", methods=["DELETE"])
     @jwt_required()
@@ -117,16 +121,16 @@ def register_routes(app: Flask):
     @jwt_required()
     def get_all_categories():
         categories_cursor = Category.select().execute()
-        
+
         categories_dto = to_categories_dto(categories_cursor)
 
         return jsonify(success=True, categories=categories_dto), 200
-    
+
     @app.route("/categories/<id>", methods=["GET"])
     @jwt_required()
     def get_category(id):
         category = Category.get_by_id(id)
-        
+
         category_dto = to_category_dto(category)
 
         return jsonify(success=True, category=category_dto), 200
@@ -136,9 +140,12 @@ def register_routes(app: Flask):
     def create_category():
         name = request.json.get("name")
 
-        category = Category.create(name=name)
+        category = Category.create(
+            id=uuid4(),
+            name=name
+        )
 
-        return jsonify(success=True,categoryId=category.id), 200
+        return jsonify(success=True, categoryId=category.id), 200
 
     @app.route("/categories/<id>", methods=["PUT"])
     @jwt_required()

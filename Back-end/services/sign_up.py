@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from services.exception import ServiceException
 from data.users import User
 
@@ -9,6 +11,7 @@ def sign_up(name: str, email: str, password: str):
         raise SignUpServiceException("Email is already registered")
 
     User.create(
+        id=uuid4(),
         name=name,
         email=email,
         password=password
