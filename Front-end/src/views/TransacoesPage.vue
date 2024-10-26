@@ -13,8 +13,8 @@
       <tbody>
         <tr v-for="(transacao, index) in transacoes" :key="index">
           <td>{{ transacao.description }}</td>
-          <td>R${{ transacao.value }}</td>
-          <td>{{ transacao.date }}</td>
+          <td>R${{ formatarValorMonetario(transacao.value) }}</td>
+          <td>{{ formatDate(transacao.date) }}</td>
           <td>Butao</td>
         </tr>
       </tbody>
@@ -27,6 +27,7 @@
 <script>
 import BaseUserTemplate from '@/components/baseUser/BaseUserTemplate.vue'
 import axiosMyGrowMoney from '@/services/axios-configs'
+import { formatDateFromIso, formatNumberToMoneyDouble } from '@/utils/formatUtils'
 
 export default {
   components: {
@@ -49,6 +50,12 @@ export default {
       } catch (error) {
         console.error(error)
       }
+    },
+    formatDate(isoDate) {
+      return formatDateFromIso(isoDate)
+    },
+    formatarValorMonetario(value) {
+      return formatNumberToMoneyDouble(value)
     }
   },
   async mounted() {
