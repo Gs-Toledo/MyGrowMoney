@@ -1,12 +1,22 @@
 <template>
   <base-user-template>
-    <h2 class="mb-3 font-weight-bold text-lg">Cadastro de Categorias</h2>
-    <v-row>
-      <v-col>
-        <v-text-field label="Nome da Categoria" v-model="newCategoria" type="text"></v-text-field>
-      </v-col>
-    </v-row>
-    <v-btn class="mt-4" type="button" @click="postCadastroNewCategoria"> Cadastrar </v-btn>
+    <h2 class="mb-3 font-weight-bold text-lg">Categorias</h2>
+    <v-table v-if="categorias.length > 0">
+      <thead>
+        <tr>
+          <th class="text-left">Categoria</th>
+          <th class="text-left">Excluir</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(categoria, index) in categorias" :key="index">
+          <td>{{ categoria.name }}</td>
+          <td>Butao</td>
+        </tr>
+      </tbody>
+    </v-table>
+
+    <router-link to="/categorias/cadastro">Cadastrar</router-link>
   </base-user-template>
 </template>
 
@@ -20,31 +30,25 @@ export default {
   },
   data() {
     return {
-      newCategoria: ''
+      categorias: []
     }
   },
   methods: {
-    async postCadastroNewCategoria() {
-      console.log('Teste de Formulário enviado:', this.form)
+    async getCategorias() {
       let url = '/categories'
-      if (this.newCategoria.trim() == '') {
-        alert('Preencha corretamente os campos')
-        return
-      }
+
       try {
-        await axiosMyGrowMoney.post(url, { name: this.newCategoria })
-        alert('categoria cadastrada com sucesso')
+        const response = await axiosMyGrowMoney(url)
+        console.log('categorias novas', response.data)
+
+        this.categorias = response.data.categories
       } catch (error) {
-        console.error('Erro ao cadastrar categoria', error)
-        alert('Erro ao cadastrar a nova categoria, tente novamente!')
+        console.error(error)
       }
-    },
-    async getCategoriasCadastradas() {
-      
     }
   },
   async mounted() {
-
+    await this.getCategorias()
   }
 }
 </script>

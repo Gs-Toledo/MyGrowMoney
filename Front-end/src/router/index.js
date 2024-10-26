@@ -4,8 +4,10 @@ import LoginPage from '@/views/LoginPage.vue';
 import UserRegister from '@/views/UserRegister.vue';
 import HomePage from '@/views/HomePage.vue'
 import ErrorPage from '@/views/ErrorPage.vue';
-import CadastroReceitasDespesasPage from '@/views/CadastroReceitasDespesasPage.vue';
+import CadastrarCategoriasPage from '@/views/CadastrarCategoriasPage.vue';
 import CategoriasPage from '@/views/CategoriasPage.vue';
+import CadastrarTransacoesPage from '@/views/CadastrarTransacoesPage.vue';
+import TransacoesPage from '@/views/TransacoesPage.vue';
 
 const routes = [
     {
@@ -58,10 +60,22 @@ const routes = [
         meta: { title: 'Home' }
     },
     {
-        path: '/receitas-despesas',
-        name: 'CadastrarReceitasDespesas',
-        component: CadastroReceitasDespesasPage,
-        meta: { title: 'Receitas e Despesas' }
+        path: '/transacoes',
+        name: 'Transacoes',
+        component: TransacoesPage,
+        meta: { title: 'Transações' }
+    },
+    {
+        path: '/transacoes/cadastro',
+        name: 'CadastrarTransacoes',
+        component: CadastrarTransacoesPage,
+        meta: { title: 'Cadastrar Transações' }
+    },
+    {
+        path: '/categorias/cadastro',
+        name: 'CadastrarCategorias',
+        component: CadastrarCategoriasPage,
+        meta: { title: 'Cadastrar Categorias' }
     },
     {
         path: '/categorias',

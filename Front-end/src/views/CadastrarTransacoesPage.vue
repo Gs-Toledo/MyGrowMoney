@@ -1,6 +1,6 @@
 <template>
   <base-user-template>
-    <h2 class="mb-3 font-weight-bold text-lg">Cadastro de Receitas/Despesas</h2>
+    <h2 class="mb-3 font-weight-bold text-lg">Cadastro de Transação</h2>
     <v-row>
       <v-col>
         <v-textarea label="Descrição" v-model="form.description"></v-textarea>

@@ -7,8 +7,8 @@
     <v-divider></v-divider>
 
     <v-list density="compact" nav>
-      <router-link class="text-black" to="/receitas-despesas"
-        ><v-list-item prepend-icon="mdi-piggy-bank-outline" title="Receitas/Despesas"></v-list-item
+      <router-link class="text-black" to="/transacoes"
+        ><v-list-item prepend-icon="mdi-piggy-bank-outline" title="Transações"></v-list-item
       ></router-link>
       <router-link class="text-black" to="/categorias">
         <v-list-item prepend-icon="mdi-account-multiple" title="Categorias"></v-list-item>
