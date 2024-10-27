@@ -1,12 +1,12 @@
-import axios from 'axios';
 import { isEmpty } from '../utils/validationUtils';
+import axiosMyGrowMoney from './axios-configs';
 
 class AuthService {
     static async login(loginData) {
         try {
 
             if (isEmpty(loginData.email) || isEmpty(loginData.password)) {
-                throw new ValidationError('Usuario ou senha não podem estar vazios.');
+                throw new Error('Usuario ou senha não podem estar vazios.');
             }
 
             const bodyParams =
@@ -15,7 +15,7 @@ class AuthService {
                 password: loginData.password
             }
 
-            const response = await axios.post('http://localhost:8081/api/login', bodyParams);
+            const response = await axiosMyGrowMoney.post('/sign-in', bodyParams);
             return response.data;
         } catch (error) {
             console.error('Erro ao realizar o login:', error);
@@ -25,17 +25,18 @@ class AuthService {
 
     static async createAccount(accountData) {
         try {
-            if (isEmpty(accountData.email) || isEmpty(accountData.password)) {
-                throw new ValidationError('Usuario ou senha não podem estar vazios.');
+            if (isEmpty(accountData.email) || isEmpty(accountData.password) || isEmpty(accountData.name)) {
+                throw new Error('Usuario ou senha não podem estar vazios.');
             }
 
             const bodyParams =
             {
-                email: loginData.email,
-                password: loginData.password
+                name: accountData.name,
+                email: accountData.email,
+                password: accountData.password
             }
 
-            const response = await axios.post('http://localhost:8081/api/cadastro', bodyParams);
+            const response = await axiosMyGrowMoney.post('/sign-up', bodyParams);
             return response.data;
         } catch (error) {
             console.error('Erro ao realizar o Cadastro:', error);

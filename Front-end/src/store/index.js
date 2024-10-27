@@ -15,7 +15,6 @@ export default createStore({
         async login({ commit }, credentials) {
             try {
                 const response = await AuthService.login(credentials);
-                console.log(response)
                 const token = response.accessToken;
 
                 commit('setToken', token);

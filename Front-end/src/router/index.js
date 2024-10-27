@@ -1,7 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import store from '@/store';
 import LoginPage from '@/views/LoginPage.vue';
-import UserRegister from '../views/UserRegister.vue';
+import UserRegister from '@/views/UserRegister.vue';
+import HomePage from '@/views/HomePage.vue'
+import ErrorPage from '@/views/ErrorPage.vue';
+import CadastrarCategoriasPage from '@/views/CadastrarCategoriasPage.vue';
+import CategoriasPage from '@/views/CategoriasPage.vue';
+import CadastrarTransacoesPage from '@/views/CadastrarTransacoesPage.vue';
+import TransacoesPage from '@/views/TransacoesPage.vue';
 
 const routes = [
     {
@@ -16,16 +22,66 @@ const routes = [
         }
     },
     {
+        path: '/:catchAll(.*)',
+        name: 'NotFound',
+        component: ErrorPage,
+        props: {
+            errorCode: 404,
+            errorMessage: 'A página que você está procurando não foi encontrada.',
+        },
+        meta: { title: 'Erro 404 - Não Encontrado' }
+    },
+    {
+        path: '/forbidden',
+        name: 'Forbidden',
+        component: ErrorPage,
+        props: {
+            errorCode: 403,
+            errorMessage: 'Você não tem permissão para acessar esta página.',
+        },
+        meta: { title: 'Erro 403 - Proibido' }
+    },
+    {
         path: '/login',
         name: 'Login',
         component: LoginPage,
-        meta: {title: 'Login'}
+        meta: { title: 'Login' }
     },
     {
         path: '/register',
         name: 'Register',
         component: UserRegister,
-        meta: {title: 'Cadastro'}
+        meta: { title: 'Cadastro' }
+    },
+    {
+        path: '/home',
+        name: 'Home',
+        component: HomePage,
+        meta: { title: 'Home' }
+    },
+    {
+        path: '/transacoes',
+        name: 'Transacoes',
+        component: TransacoesPage,
+        meta: { title: 'Transações' }
+    },
+    {
+        path: '/transacoes/cadastro',
+        name: 'CadastrarTransacoes',
+        component: CadastrarTransacoesPage,
+        meta: { title: 'Cadastrar Transações' }
+    },
+    {
+        path: '/categorias/cadastro',
+        name: 'CadastrarCategorias',
+        component: CadastrarCategoriasPage,
+        meta: { title: 'Cadastrar Categorias' }
+    },
+    {
+        path: '/categorias',
+        name: 'Categorias',
+        component: CategoriasPage,
+        meta: { title: 'Categorias' }
     }
 
 ]
