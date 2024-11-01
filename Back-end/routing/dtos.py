@@ -4,7 +4,7 @@ def to_transaction_dto (transaction):
         "value": transaction.value,
         "description": transaction.description,
         "date": transaction.date,
-        "categoryId": transaction.category_id
+        "category": to_category_dto(transaction.category)
     }
 
 def to_transactions_dto (transactions):
