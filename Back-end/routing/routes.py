@@ -12,6 +12,7 @@ from data.categories import Category
 from data.users import User
 from services.sign_up import sign_up
 from services.sign_in import sign_in
+from services.create_transaction import create_transaction
 from routing.schemas import SignInSchema, SignUpSchema, schema
 from routing.dtos import to_transaction_dto, to_transactions_dto, to_category_dto, to_categories_dto
 
@@ -86,9 +87,8 @@ def register_routes(app: Flask):
 
     @app.route("/transactions", methods=["POST"])
     @jwt_required()
-    def create_transaction():
+    def create_transaction_route():
         user_id = get_jwt_identity()
-        user = User.get_by_id(user_id)
 
         category_id = request.json.get("category_id")
         value = request.json.get("value")
@@ -96,22 +96,16 @@ def register_routes(app: Flask):
         description = request.json.get("description")
         is_recurring = request.json.get("is_recurring", False)
 
-        category = Category.get_or_none(category_id)
-
-        if category is None:
-            return jsonify(success=False, message="Category was not found"), 400
-
-        transaction = Transaction.create(
-            id=uuid4(),
-            user=user,
-            category=category,
-            value=value,
-            date=date,
-            description=description,
-            is_recurring=is_recurring
+        transaction_id = create_transaction(
+            user_id = user_id,
+            category_id = category_id,
+            value = value,
+            date = date,
+            description = description,
+            is_recurring = is_recurring
         )
 
-        return jsonify(success=True, transactionId=transaction.id), 200
+        return jsonify(success=True, transactionId=transaction_id), 200
 
     @app.route("/transactions/<id>", methods=["DELETE"])
     @jwt_required()
