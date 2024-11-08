@@ -18,6 +18,7 @@ from services.sign_in import sign_in
 from services.create_transaction import create_transaction
 from services.delete_transaction import delete_transaction
 from services.get_all_transactions import get_all_transactions
+from services.get_all_categories import get_all_categories
 
 from routing.schemas import SignInSchema, SignUpSchema, schema
 from routing.dtos import to_transaction_dto, to_transactions_dto, to_category_dto, to_categories_dto
@@ -122,10 +123,10 @@ def register_routes(app: Flask):
 
     @app.route("/categories", methods=["GET"])
     @jwt_required()
-    def get_all_categories():
-        categories_cursor = Category.select().execute()
+    def get_all_categories_route():
+        categories = get_all_categories()
 
-        categories_dto = to_categories_dto(categories_cursor)
+        categories_dto = to_categories_dto(categories)
 
         return jsonify(success=True, categories=categories_dto), 200
 
