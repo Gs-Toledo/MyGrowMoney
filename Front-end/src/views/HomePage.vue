@@ -21,11 +21,14 @@ export default {
       try {
         const response = await axiosMyGrowMoney.get(url)
         console.log('response transactions', response.data)
-        this.transacoes = response.data
+        this.transacoes = response.data.transactions
       } catch (error) {
         console.error('erro ao buscar transacoes',error)
       }
     }
+  },
+  async mounted() {
+    this.getAllTransactions()
   }
 }
 </script>
