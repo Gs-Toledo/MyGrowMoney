@@ -10,11 +10,12 @@ from flask_jwt_extended import (
     jwt_required
 )
 
-from data.transactions import Transaction
 from data.categories import Category
 
 from services.sign_up import sign_up
 from services.sign_in import sign_in
+
+from services.get_transaction import get_transaction
 from services.create_transaction import create_transaction
 from services.delete_transaction import delete_transaction
 from services.get_all_transactions import get_all_transactions
@@ -85,8 +86,8 @@ def register_routes(app: Flask):
 
     @app.route("/transactions/<id>", methods=["GET"])
     @jwt_required()
-    def get_transaction(id):
-        transaction = Transaction.get_by_id(id)
+    def get_transaction_route(id):
+        transaction = get_transaction(id)
 
         transaction_dto = to_transaction_dto(transaction)
 
