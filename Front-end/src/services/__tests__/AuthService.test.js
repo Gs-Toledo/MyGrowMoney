@@ -7,6 +7,7 @@ vi.mock('../axios-configs');
 
 
 // Mock do localStorage
+// eslint-disable-next-line no-undef
 global.localStorage = {
     getItem: vi.fn(),
     setItem: vi.fn(),

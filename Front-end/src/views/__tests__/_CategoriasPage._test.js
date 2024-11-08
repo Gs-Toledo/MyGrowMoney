@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { vi } from 'vitest'
-import CategoriasView from '@/views/CategoriasPage.vue' // ajuste o caminho conforme necessário
+import { vi, describe, beforeEach, expect, afterEach, it } from 'vitest'
+import CategoriasView from '@/views/CategoriasPage.vue'
 import axiosMyGrowMoney from '@/services/axios-configs'
 
 
@@ -10,31 +10,31 @@ describe('CategoriasView', () => {
   let wrapper
 
   beforeEach(() => {
-   
+
     wrapper = mount(CategoriasView)
   })
 
   afterEach(() => {
-    vi.clearAllMocks() 
+    vi.clearAllMocks()
   })
 
   it('deve exibir o spinner de carregamento enquanto as categorias estão sendo carregadas', async () => {
- 
+
     axiosMyGrowMoney.mockResolvedValue({ data: { categories: [] } })
 
     await wrapper.vm.getCategorias()
 
-    
+
     expect(wrapper.find('v-progress-circular').exists()).toBe(true)
   })
 
   it('deve exibir uma mensagem de erro se a requisição falhar', async () => {
     axiosMyGrowMoney.mockRejectedValue(new Error('Erro ao carregar as categorias'))
 
-    
+
     await wrapper.vm.getCategorias()
 
-    
+
     expect(wrapper.text()).toContain('Erro ao carregas os dados, tente novamente mais tarde...')
   })
 
@@ -48,7 +48,7 @@ describe('CategoriasView', () => {
 
     await wrapper.vm.getCategorias()
 
-   
+
     expect(wrapper.findAll('tr')).toHaveLength(mockCategorias.length)
   })
 
@@ -57,7 +57,7 @@ describe('CategoriasView', () => {
 
     await wrapper.vm.getCategorias()
 
-    
+
     expect(wrapper.text()).toContain('Nenhuma Categoria encontrada.')
   })
 
@@ -66,10 +66,10 @@ describe('CategoriasView', () => {
     const confirmMock = vi.fn().mockReturnValue(true)
     global.confirm = confirmMock
 
-  
+
     axiosMyGrowMoney.delete.mockResolvedValue({})
 
-   
+
     wrapper = mount(CategoriasView, {
       data() {
         return {
@@ -82,7 +82,7 @@ describe('CategoriasView', () => {
 
     await wrapper.find('button').trigger('click')
 
-   
+
     expect(axiosMyGrowMoney.delete).toHaveBeenCalledWith('/categories/1')
     expect(confirmMock).toHaveBeenCalled()
   })
