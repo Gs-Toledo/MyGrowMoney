@@ -97,6 +97,7 @@ def register_routes(app: Flask):
         is_recurring = request.json.get("is_recurring", False)
 
         category = Category.get_or_none(category_id)
+        limit_category = Category.limit
 
         if category is None:
             return jsonify(success=False, message="Category was not found"), 400
@@ -119,6 +120,23 @@ def register_routes(app: Flask):
         transaction = Transaction.get_by_id(id)
         transaction.delete_instance()
         return jsonify(success=True), 200
+    
+    @app.route("/categories/<id>/transactions", methods=["GET"])
+    @jwt_required()
+    def get_transactions_by_category(id):
+
+        category_id = request.json.get("category_id")
+
+        try:
+            category_id = Category.get_by_id(id)
+            transactions = Transaction.select().where(Transaction.category == category_id)
+            transactions_dto = [to_transaction_dto(transaction) for transaction in transactions]
+
+            return jsonify(success=True, transactions = transactions_dto), 200
+
+        except Category.DoesNotExist:
+            return jsonify(success=False, message="Categoria não encontrada"), 404
+
 
     @app.route("/categories", methods=["GET"])
     @jwt_required()
@@ -142,10 +160,12 @@ def register_routes(app: Flask):
     @jwt_required()
     def create_category():
         name = request.json.get("name")
+        limit = request.json.get("limit")
 
         category = Category.create(
             id=uuid4(),
             name=name
+            limit=limit
         )
 
         return jsonify(success=True, categoryId=category.id), 200
@@ -155,6 +175,7 @@ def register_routes(app: Flask):
     def update_category(id):
         category = Category.get_by_id(id)
         category.name = request.json.get("name")
+        category.limit = request.json.get("limit")
         category.save()
         return jsonify(success=True), 200
 
