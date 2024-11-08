@@ -3,16 +3,21 @@ from uuid import uuid4
 from flask import Flask, request, jsonify
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import (
-    JWTManager, create_access_token, create_refresh_token,
-    get_jwt_identity, jwt_required
+    JWTManager,
+    create_access_token, 
+    create_refresh_token,
+    get_jwt_identity,
+    jwt_required
 )
 
 from data.transactions import Transaction
 from data.categories import Category
-from data.users import User
+
 from services.sign_up import sign_up
 from services.sign_in import sign_in
 from services.create_transaction import create_transaction
+from services.delete_transaction import delete_transaction
+
 from routing.schemas import SignInSchema, SignUpSchema, schema
 from routing.dtos import to_transaction_dto, to_transactions_dto, to_category_dto, to_categories_dto
 
@@ -109,9 +114,9 @@ def register_routes(app: Flask):
 
     @app.route("/transactions/<id>", methods=["DELETE"])
     @jwt_required()
-    def delete_transaction(id):
-        transaction = Transaction.get_by_id(id)
-        transaction.delete_instance()
+    def delete_transaction_route(id):
+        delete_transaction(transaction_id = id)
+
         return jsonify(success=True), 200
 
     @app.route("/categories", methods=["GET"])
