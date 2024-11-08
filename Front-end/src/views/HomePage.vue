@@ -4,18 +4,27 @@
 
 <script>
 import BaseUserTemplate from '@/components/baseUser/BaseUserTemplate.vue'
+import axiosMyGrowMoney from '@/services/axios-configs';
 export default {
   components: {
     BaseUserTemplate
   },
   data() {
     return {
-      transacoes: [
-        { description: 'Salário', type: 'receita', amount: 5000 },
-        { description: 'Aluguel', type: 'despesa', amount: 1500 },
-        { description: 'Supermercado', type: 'despesa', amount: 800 },
-        { description: 'Freelance', type: 'receita', amount: 2200 }
-      ]
+      transacoes: []
+    }
+  },
+  methods: {
+    async getAllTransactions() {
+      let url = '/transactions'
+
+      try {
+        const response = await axiosMyGrowMoney.get(url)
+        console.log('response transactions', response.data)
+        this.transacoes = response.data
+      } catch (error) {
+        console.error('erro ao buscar transacoes',error)
+      }
     }
   }
 }
