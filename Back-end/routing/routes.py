@@ -161,7 +161,7 @@ def register_routes(app: Flask):
     @app.route("/categories/<id>/transactions/limt", methods=["GET"])
     @jwt_required()
     def get_compare_limit_by_category(id):   
-        
+        """  """
     
 
     @app.route("/categories", methods=["GET"])
@@ -190,7 +190,7 @@ def register_routes(app: Flask):
 
         category = Category.create(
             id=uuid4(),
-            name=name
+            name=name,
             limit=limit
         )
 
