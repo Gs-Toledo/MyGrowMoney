@@ -17,6 +17,7 @@ from services.sign_up import sign_up
 from services.sign_in import sign_in
 from services.create_transaction import create_transaction
 from services.delete_transaction import delete_transaction
+from services.get_all_transactions import get_all_transactions
 
 from routing.schemas import SignInSchema, SignUpSchema, schema
 from routing.dtos import to_transaction_dto, to_transactions_dto, to_category_dto, to_categories_dto
@@ -74,8 +75,8 @@ def register_routes(app: Flask):
 
     @app.route("/transactions", methods=["GET"])
     @jwt_required()
-    def get_all_transactions():
-        transactions = Transaction.select().execute()
+    def get_all_transactions_route():
+        transactions = get_all_transactions()
 
         transactions_dto = to_transactions_dto(transactions)
 
