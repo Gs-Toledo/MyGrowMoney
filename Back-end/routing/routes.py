@@ -96,8 +96,7 @@ def register_routes(app: Flask):
         description = request.json.get("description")
         is_recurring = request.json.get("is_recurring", False)
 
-        category = Category.get_or_none(category_id)
-        limit_category = Category.limit
+        category = Category.get_or_none(category_id)        
 
         if category is None:
             return jsonify(success=False, message="Category was not found"), 400
@@ -137,19 +136,32 @@ def register_routes(app: Flask):
         except Category.DoesNotExist:
             return jsonify(success=False, message="Categoria não encontrada"), 404
 
-    @app.route("/categories/<id>/transactions", methods=["GET"])
+    @app.route("/categories/<id>/transactions/total", methods=["GET"])
     @jwt_required()
     def get_amount_by_category(id):    
         try:
             category_id = Category.get_by_id(id)
+            limit_category = Category.limit
             total_value = (
                 Transaction.select(fn.SUM(Transaction.value)).where(Transaction.category_id == category_id).scalar()
             )
+
             if total_value is None:
                 total_value = 0
                 return  jsonify(success=True, total = total_value), 200
+            
+            if total_value > limit_category:
+                return jsonify(success=True, total = total_value, message = "Limite da categoria atingido")
+            else:
+                return jsonify(success=True, total = total_value, message = "Limite da categoria não atingido")
         except Category.DoesNotExist:
             return jsonify(success=False, message="Categoria não encontrada"), 404
+    
+    @app.route("/categories/<id>/transactions/limt", methods=["GET"])
+    @jwt_required()
+    def get_compare_limit_by_category(id):   
+        
+    
 
     @app.route("/categories", methods=["GET"])
     @jwt_required()
