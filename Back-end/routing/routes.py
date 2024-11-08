@@ -137,6 +137,19 @@ def register_routes(app: Flask):
         except Category.DoesNotExist:
             return jsonify(success=False, message="Categoria não encontrada"), 404
 
+    @app.route("/categories/<id>/transactions", methods=["GET"])
+    @jwt_required()
+    def get_amount_by_category(id):    
+        try:
+            category_id = Category.get_by_id(id)
+            total_value = (
+                Transaction.select(fn.SUM(Transaction.value)).where(Transaction.category_id == category_id).scalar()
+            )
+            if total_value is None:
+                total_value = 0
+                return  jsonify(success=True, total = total_value), 200
+        except Category.DoesNotExist:
+            return jsonify(success=False, message="Categoria não encontrada"), 404
 
     @app.route("/categories", methods=["GET"])
     @jwt_required()
