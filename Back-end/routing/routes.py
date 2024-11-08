@@ -112,7 +112,9 @@ def register_routes(app: Flask):
             is_recurring=is_recurring
         )
 
-        return jsonify(success=True, transactionId=transaction.id), 200
+        budget_alert = check_budget_alert(category_id)
+
+        return jsonify(success=True, transactionId=transaction.id, budget_alert=budget_alert), 200
 
     @app.route("/transactions/<id>", methods=["DELETE"])
     @jwt_required()
@@ -137,7 +139,7 @@ def register_routes(app: Flask):
         except Category.DoesNotExist:
             return jsonify(success=False, message="Categoria não encontrada"), 404
 
-    @app.route("/categories/<id>/transactions/total", methods=["GET"])
+    @app.route("transactions/categories/<id>/total", methods=["GET"])
     @jwt_required()
     def get_amount_by_category(id):    
         try:
@@ -211,9 +213,3 @@ def register_routes(app: Flask):
         category = Category.get_by_id(id)
         category.delete_instance()
         return jsonify(success=True), 200
-    
-    @app.route("/categories/<id>/budget-alert", methods=["GET"])
-    @jwt_required()
-    def budget_alert_route(id):
-        check_budget_alert(id)
-        return jsonify(success=True, message="Alerta de orçamento verificado."), 200
