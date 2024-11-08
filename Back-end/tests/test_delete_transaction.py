@@ -1,7 +1,6 @@
 from unittest import *
 from unittest.mock import *
 
-from services.exception import NotFoundServiceException
 from services.delete_transaction import delete_transaction
 
 class DeleteTransactionTests(TestCase):
