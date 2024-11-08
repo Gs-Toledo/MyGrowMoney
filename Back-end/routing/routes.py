@@ -7,6 +7,7 @@ from flask_jwt_extended import (
     get_jwt_identity, jwt_required
 )
 
+from services.budget_alert_service import check_budget_alert
 from data.transactions import Transaction
 from data.categories import Category
 from data.users import User
@@ -210,3 +211,9 @@ def register_routes(app: Flask):
         category = Category.get_by_id(id)
         category.delete_instance()
         return jsonify(success=True), 200
+    
+    @app.route("/categories/<id>/budget-alert", methods=["GET"])
+    @jwt_required()
+    def budget_alert_route(id):
+        check_budget_alert(id)
+        return jsonify(success=True, message="Alerta de orçamento verificado."), 200
