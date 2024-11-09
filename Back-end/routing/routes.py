@@ -3,8 +3,11 @@ from uuid import uuid4
 from flask import Flask, request, jsonify
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import (
-    JWTManager, create_access_token, create_refresh_token,
-    get_jwt_identity, jwt_required
+    JWTManager,
+    create_access_token,
+    create_refresh_token,
+    get_jwt_identity,
+    jwt_required,
 )
 
 from services.budget_alert_service import check_budget_alert
@@ -14,7 +17,12 @@ from data.users import User
 from services.sign_up import sign_up
 from services.sign_in import sign_in
 from routing.schemas import SignInSchema, SignUpSchema, schema
-from routing.dtos import to_transaction_dto, to_transactions_dto, to_category_dto, to_categories_dto
+from routing.dtos import (
+    to_transaction_dto,
+    to_transactions_dto,
+    to_category_dto,
+    to_categories_dto,
+)
 
 
 def register_routes(app: Flask):
@@ -97,7 +105,7 @@ def register_routes(app: Flask):
         description = request.json.get("description")
         is_recurring = request.json.get("is_recurring", False)
 
-        category = Category.get_or_none(category_id)        
+        category = Category.get_or_none(category_id)
 
         if category is None:
             return jsonify(success=False, message="Category was not found"), 400
@@ -109,12 +117,17 @@ def register_routes(app: Flask):
             value=value,
             date=date,
             description=description,
-            is_recurring=is_recurring
+            is_recurring=is_recurring,
         )
 
         budget_alert = check_budget_alert(category_id)
 
-        return jsonify(success=True, transactionId=transaction.id, budget_alert=budget_alert), 200
+        return (
+            jsonify(
+                success=True, transactionId=transaction.id, budget_alert=budget_alert
+            ),
+            200,
+        )
 
     @app.route("/transactions/<id>", methods=["DELETE"])
     @jwt_required()
@@ -122,7 +135,7 @@ def register_routes(app: Flask):
         transaction = Transaction.get_by_id(id)
         transaction.delete_instance()
         return jsonify(success=True), 200
-    
+
     @app.route("/categories/<id>/transactions", methods=["GET"])
     @jwt_required()
     def get_transactions_by_category(id):
@@ -131,13 +144,17 @@ def register_routes(app: Flask):
 
         try:
             category_id = Category.get_by_id(id)
-            transactions = Transaction.select().where(Transaction.category == category_id)
-            transactions_dto = [to_transaction_dto(transaction) for transaction in transactions]
+            transactions = Transaction.select().where(
+                Transaction.category == category_id
+            )
+            transactions_dto = [
+                to_transaction_dto(transaction) for transaction in transactions
+            ]
 
-            return jsonify(success=True, transactions = transactions_dto), 200
+            return jsonify(success=True, transactions=transactions_dto), 200
 
         except Category.DoesNotExist:
-            return jsonify(success=False, message="Categoria não encontrada"), 404
+            return jsonify(success=False, message="Categoria não encontrada"), 404 # noqa
 
     @app.route("/categories", methods=["GET"])
     @jwt_required()
@@ -163,11 +180,7 @@ def register_routes(app: Flask):
         name = request.json.get("name")
         limit = request.json.get("limit")
 
-        category = Category.create(
-            id=uuid4(),
-            name=name,
-            limit=limit
-        )
+        category = Category.create(id=uuid4(), name=name, limit=limit)
 
         return jsonify(success=True, categoryId=category.id), 200
 
