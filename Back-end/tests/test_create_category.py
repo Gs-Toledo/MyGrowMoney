@@ -15,7 +15,8 @@ class CreateTransactionTests(TestCase):
         mock_category_create.return_value = mock_category
 
         category_id = create_category(
-            name = "Health"
+            name = "Health",
+            limit = 200.0,
         )
 
         assert category_id == "category-1"
