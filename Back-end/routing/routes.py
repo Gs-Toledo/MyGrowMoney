@@ -36,6 +36,7 @@ from routing.dtos import (
     to_categories_dto,
 )
 
+
 def register_routes(app: Flask):
     jwt = JWTManager(app)
     bcrypt = Bcrypt(app)
@@ -108,29 +109,34 @@ def register_routes(app: Flask):
     @jwt_required()
     def create_transaction_route():
         user_id = get_jwt_identity()
-
+        user = User.get_by_id(user_id)
         category_id = request.json.get("category_id")
         value = request.json.get("value")
         date = request.json.get("date")
         description = request.json.get("description")
         is_recurring = request.json.get("is_recurring", False)
+        category = Category.get_or_none(category_id)
 
-        transaction_id = create_transaction(
-            user_id = user_id,
-            category_id = category_id,
-            value = value,
-            date = date,
-            description = description,
-            is_recurring = is_recurring
+        if category is None:
+            return jsonify(success=False, message="Category was not found"), 400  # noqa
+
+        transaction = Transaction.create(
+            id=uuid4(),
+            user=user,
+            category=category,
+            value=value,
+            date=date,
+            description=description,
+            is_recurring=is_recurring,
         )
 
-        budget_alert = check_budget_alert(category_id)
+        budget_alert = check_budget_alert(category)
 
         return (
             jsonify(
                 success=True,
-                transactionId=transaction_id,
-                budget_alert=budget_alert,
+                transactionId=transaction.id,
+                budget_alert=budget_alert,  # noqa
             ),
             200,
         )
@@ -138,7 +144,7 @@ def register_routes(app: Flask):
     @app.route("/transactions/<id>", methods=["DELETE"])
     @jwt_required()
     def delete_transaction_route(id):
-        delete_transaction(transaction_id = id)
+        delete_transaction(transaction_id=id)
 
         return jsonify(success=True), 200
 
@@ -159,7 +165,10 @@ def register_routes(app: Flask):
             return jsonify(success=True, transactions=transactions_dto), 200
 
         except Category.DoesNotExist:
-            return jsonify(success=False, message="Categoria não encontrada"), 404 # noqa
+            return (
+                jsonify(success=False, message="Categoria não encontrada"),
+                404,
+            )  # noqa
 
     @app.route("/categories", methods=["GET"])
     @jwt_required()
@@ -185,10 +194,7 @@ def register_routes(app: Flask):
         name = request.json.get("name")
         limit = request.json.get("limit")
 
-        category_id = create_category(
-            name,
-            limit
-        )
+        category_id = create_category(name, limit)
 
         return jsonify(success=True, categoryId=category_id), 200
 
@@ -198,11 +204,7 @@ def register_routes(app: Flask):
         name = request.json.get("name")
         limit = request.json.get("limit")
 
-        update_category(
-            id,
-            name,
-            limit
-        )
+        update_category(id, name, limit)
 
         return jsonify(success=True), 200
 
