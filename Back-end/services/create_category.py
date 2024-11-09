@@ -6,7 +6,7 @@ def create_category(name, limit):
     category = Category.create(
         id = uuid4(),
         name = name,
-        limit = limit,
+        limit = limit or 0.0,
     )
 
     return category.id
