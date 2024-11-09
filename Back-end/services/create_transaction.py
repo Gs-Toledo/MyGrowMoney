@@ -13,12 +13,12 @@ def create_transaction(
     description = "",
     is_recurring = False
 ):
-    user = User.get_by_id(user_id)
+    user = User.get_or_none(id = user_id)
 
     if user is None:
         raise NotFoundServiceException("User was not found")
 
-    category = Category.get_or_none(category_id)
+    category = Category.get_or_none(id = category_id)
 
     if category is None:
         raise NotFoundServiceException("Category was not found")
