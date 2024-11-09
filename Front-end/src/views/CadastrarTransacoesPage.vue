@@ -28,6 +28,16 @@
       </v-radio-group>
     </v-row>
 
+    <v-row>
+      <v-col>
+        <v-checkbox
+          label="Transação Recorrente?"
+          v-model="form.is_recurring"
+          class="mt-4"
+        ></v-checkbox>
+      </v-col>
+    </v-row>
+
     <v-btn
       class="mt-4"
       :disabled="isSendingRequest"
@@ -56,7 +66,8 @@ export default {
         value: null,
         date: null,
         categoryId: null,
-        type: 'receita'
+        type: 'receita',
+        is_recurring: false
       },
       categorias: [],
       isSendingRequest: false
@@ -77,7 +88,7 @@ export default {
         alert('Cadastro realizado com sucesso!')
       } catch (error) {
         console.error('Erro ao cadastrar', error)
-        
+
         alert('Erro no cadastro: ' + error?.response?.data.message)
       } finally {
         this.isSendingRequest = false
