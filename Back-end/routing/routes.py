@@ -19,6 +19,7 @@ from services.delete_transaction import delete_transaction
 from services.get_all_transactions import get_all_transactions
 
 from services.get_category import get_category
+from services.create_category import create_category
 from services.update_category import update_category
 from services.delete_category import delete_category
 from services.get_all_categories import get_all_categories
@@ -143,7 +144,7 @@ def register_routes(app: Flask):
 
     @app.route("/categories", methods=["POST"])
     @jwt_required()
-    def create_category():
+    def create_category_route():
         name = request.json.get("name")
 
         category_id = create_category(
