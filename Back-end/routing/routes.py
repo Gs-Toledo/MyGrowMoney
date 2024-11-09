@@ -128,7 +128,9 @@ def register_routes(app: Flask):
 
         return (
             jsonify(
-                success=True, transactionId=transaction.id, budget_alert=budget_alert
+                success=True,
+                transactionId=transaction_id,
+                budget_alert=budget_alert,
             ),
             200,
         )
