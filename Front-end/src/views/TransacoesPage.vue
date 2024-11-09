@@ -16,7 +16,9 @@
           <tr>
             <th class="text-left">Nome</th>
             <th class="text-left">Valor</th>
+            <th>Categoria</th>
             <th class="text-left">Data</th>
+            <th class="text-left">Recorrente?</th>
             <th class="text-left"></th>
           </tr>
         </thead>
@@ -24,7 +26,10 @@
           <tr v-for="(transacao, index) in transacoes" :key="index">
             <td>{{ transacao.description }}</td>
             <td>R${{ formatarValorMonetario(transacao.value) }}</td>
+            <th>{{ transacao.category.name }}</th>
             <td>{{ formatDate(transacao.date) }}</td>
+            <td v-if="transacao.is_recurring">Sim</td>
+            <td v-else>Não</td>
             <td>
               <v-btn color="red" @click="deleteTransacao(transacao)">Deletar</v-btn>
             </td>
