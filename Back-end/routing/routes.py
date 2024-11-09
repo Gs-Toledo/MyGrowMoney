@@ -127,7 +127,6 @@ def register_routes(app: Flask):
     @app.route("/categories/<id>/transactions", methods=["GET"])
     @jwt_required()
     def get_transactions_by_category(id):
-
         category_id = request.json.get("category_id")
 
         try:
@@ -139,33 +138,6 @@ def register_routes(app: Flask):
 
         except Category.DoesNotExist:
             return jsonify(success=False, message="Categoria não encontrada"), 404
-
-    @app.route("/categories/<id>/transactions/total", methods=["GET"])
-    @jwt_required()
-    def get_amount_by_category(id):    
-        try:
-            category_id = Category.get_by_id(id)
-            limit_category = Category.limit
-            total_value = (
-                Transaction.select(fn.SUM(Transaction.value)).where(Transaction.category_id == category_id).scalar()
-            )
-
-            if total_value is None:
-                total_value = 0
-                return  jsonify(success=True, total = total_value), 200
-            
-            if total_value > limit_category:
-                return jsonify(success=True, total = total_value, message = "Limite da categoria atingido")
-            else:
-                return jsonify(success=True, total = total_value, message = "Limite da categoria não atingido")
-        except Category.DoesNotExist:
-            return jsonify(success=False, message="Categoria não encontrada"), 404
-    
-    @app.route("/categories/<id>/transactions/limt", methods=["GET"])
-    @jwt_required()
-    def get_compare_limit_by_category(id):   
-        
-    
 
     @app.route("/categories", methods=["GET"])
     @jwt_required()
@@ -192,7 +164,8 @@ def register_routes(app: Flask):
         limit = request.json.get("limit")
 
         category_id = create_category(
-            name = name
+            name,
+            limit
         )
 
         return jsonify(success=True, categoryId=category_id), 200
@@ -201,10 +174,12 @@ def register_routes(app: Flask):
     @jwt_required()
     def update_category_route(id):
         name = request.json.get("name")
+        limit = request.json.get("limit")
 
         update_category(
             id,
             name,
+            limit
         )
 
         return jsonify(success=True), 200
