@@ -133,8 +133,8 @@ def register_routes(app: Flask):
 
     @app.route("/categories/<id>", methods=["GET"])
     @jwt_required()
-    def get_category(id):
-        category = Category.get_by_id(id)
+    def get_category_route(id):
+        category = get_category(id)
 
         category_dto = to_category_dto(category)
 
