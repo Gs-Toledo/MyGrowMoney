@@ -146,12 +146,11 @@ def register_routes(app: Flask):
     def create_category():
         name = request.json.get("name")
 
-        category = Category.create(
-            id=uuid4(),
-            name=name
+        category_id = create_category(
+            name = name
         )
 
-        return jsonify(success=True, categoryId=category.id), 200
+        return jsonify(success=True, categoryId=category_id), 200
 
     @app.route("/categories/<id>", methods=["PUT"])
     @jwt_required()
