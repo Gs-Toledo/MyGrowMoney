@@ -14,12 +14,14 @@
         <thead>
           <tr>
             <th class="text-left">Categoria</th>
+            <th>Limite</th>
             <th class="text-left">Excluir</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(categoria, index) in categorias" :key="index">
             <td>{{ categoria.name }}</td>
+            <td>R${{ formatNumberToMoneyDouble(categoria.limit) }}</td>
             <td><v-btn color="red" @click="deleteCategoria(categoria)">Deletar</v-btn></td>
           </tr>
         </tbody>
@@ -35,6 +37,7 @@
 <script>
 import BaseUserTemplate from '@/components/baseUser/BaseUserTemplate.vue'
 import axiosMyGrowMoney from '@/services/axios-configs'
+import { formatNumberToMoneyDouble } from '@/utils/formatUtils';
 
 export default {
   components: {
@@ -73,7 +76,8 @@ export default {
         alert('Categoria deletada com sucesso')
         this.getCategorias()
       }
-    }
+    },
+    formatNumberToMoneyDouble
   },
   async mounted() {
     await this.getCategorias()
