@@ -30,9 +30,10 @@ def check_budget_alert(category_id):
     # Verifica se o limite foi alcançado ou ultrapassado
     if total_value >= category.limit:
         print(f"Alerta: Você ultrapassou o orçamento da categoria '{category.name}'!")
-        return 'over_budget'
+        return 'over'
     elif total_value >= alert_threshold:
         print(f"Aviso: Você está perto de atingir o orçamento da categoria '{category.name}'.")
-        return 'almost_over_budget'
+        return 'almost'
+    return 'far'
 
 
