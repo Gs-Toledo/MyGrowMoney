@@ -10,8 +10,6 @@ from flask_jwt_extended import (
     jwt_required
 )
 
-from data.categories import Category
-
 from services.sign_up import sign_up
 from services.sign_in import sign_in
 
@@ -22,6 +20,7 @@ from services.get_all_transactions import get_all_transactions
 
 from services.get_category import get_category
 from services.update_category import update_category
+from services.delete_category import delete_category
 from services.get_all_categories import get_all_categories
 
 from routing.schemas import SignInSchema, SignUpSchema, schema
@@ -167,7 +166,7 @@ def register_routes(app: Flask):
 
     @app.route("/categories/<id>", methods=["DELETE"])
     @jwt_required()
-    def delete_category(id):
-        category = Category.get_by_id(id)
-        category.delete_instance()
+    def delete_category_route(id):
+        delete_category(id)
+
         return jsonify(success=True), 200
