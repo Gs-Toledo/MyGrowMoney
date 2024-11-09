@@ -1,13 +1,15 @@
-def to_transaction_dto (transaction):
+def to_transaction_dto(transaction):
     return {
         "id": transaction.id,
         "value": transaction.value,
         "description": transaction.description,
         "date": transaction.date,
-        "category": to_category_dto(transaction.category)
+        "category": to_category_dto(transaction.category),
+        "is_recurring": transaction.is_recurring,
     }
 
-def to_transactions_dto (transactions):
+
+def to_transactions_dto(transactions):
     transactions_dto = []
 
     for transaction in transactions:
@@ -15,13 +17,15 @@ def to_transactions_dto (transactions):
 
     return transactions_dto
 
-def to_category_dto (category):
+
+def to_category_dto(category):
     return {
         "id": category.id,
         "name": category.name,
     }
 
-def to_categories_dto (categories):
+
+def to_categories_dto(categories):
     categories_dto = []
 
     for category in categories:
