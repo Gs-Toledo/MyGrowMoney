@@ -104,11 +104,10 @@ def register_routes(app: Flask):
         date = request.json.get("date")
         description = request.json.get("description")
         is_recurring = request.json.get("is_recurring", False)
-
         category = Category.get_or_none(category_id)
 
         if category is None:
-            return jsonify(success=False, message="Category was not found"), 400
+            return jsonify(success=False, message="Category was not found"), 400 # noqa
 
         transaction = Transaction.create(
             id=uuid4(),
@@ -120,11 +119,11 @@ def register_routes(app: Flask):
             is_recurring=is_recurring,
         )
 
-        budget_alert = check_budget_alert(category_id)
+        budget_alert = check_budget_alert(category)
 
         return (
             jsonify(
-                success=True, transactionId=transaction.id, budget_alert=budget_alert
+                success=True, transactionId=transaction.id, budget_alert=budget_alert # noqa
             ),
             200,
         )
@@ -154,7 +153,10 @@ def register_routes(app: Flask):
             return jsonify(success=True, transactions=transactions_dto), 200
 
         except Category.DoesNotExist:
-            return jsonify(success=False, message="Categoria não encontrada"), 404 # noqa
+            return (
+                jsonify(success=False, message="Categoria não encontrada"),
+                404,
+            )  # noqa
 
     @app.route("/categories", methods=["GET"])
     @jwt_required()
