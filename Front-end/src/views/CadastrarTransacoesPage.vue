@@ -80,12 +80,13 @@ export default {
       let url = '/transactions'
       this.isSendingRequest = true
       try {
-        await axiosMyGrowMoney.post(url, {
+        const response = await axiosMyGrowMoney.post(url, {
           ...this.form,
-          date: this.form.date.toISOString(),
+          date: this.form.date.toISOString()
         })
 
         alert('Cadastro realizado com sucesso!')
+        console.log(response.data)
       } catch (error) {
         console.error('Erro ao cadastrar', error)
 
