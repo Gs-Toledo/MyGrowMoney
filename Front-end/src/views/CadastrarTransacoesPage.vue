@@ -19,6 +19,7 @@
           item-value="id"
           v-model="form.categoryId"
         ></v-select>
+        <span class="text-red" v-if="selectedCategoriaLimite">Limite da categoria: R${{ selectedCategoriaLimite }}</span>
       </v-col>
     </v-row>
     <v-row>
@@ -46,6 +47,8 @@
     >
       Enviar
     </v-btn>
+
+    <p class="text-red" v-if="avisoLimiteCategoria">{{ avisoLimiteCategoria }}</p>
   </base-user-template>
 </template>
 
@@ -70,7 +73,14 @@ export default {
         is_recurring: false
       },
       categorias: [],
+      selectedCategoriaLimite: null,
+      avisoLimiteCategoria: null,
       isSendingRequest: false
+    }
+  },
+  watch: {
+    'form.categoryId': function () {
+      this.setSelectedCategoryLimit()
     }
   },
   methods: {
@@ -87,6 +97,8 @@ export default {
 
         alert('Cadastro realizado com sucesso!')
         console.log(response.data)
+
+        this.avisoLimiteCategoria = this.handleLimiteCadastradoCategoria(response.data)
       } catch (error) {
         console.error('Erro ao cadastrar', error)
 
@@ -105,6 +117,26 @@ export default {
         this.categorias = response.data.categories
       } catch (error) {
         console.error(error)
+      }
+    },
+    setSelectedCategoryLimit() {
+      // Usando o valor do v-model diretamente para encontrar o limite
+      const selectedCategory = this.categorias.find(
+        (category) => category.id === this.form.categoryId
+      )
+      if (selectedCategory) {
+        this.selectedCategoriaLimite = selectedCategory.limit
+      }
+      console.log(this.selectedCategoriaLimite)
+    },
+    handleLimiteCadastradoCategoria(data) {
+      switch (data.budget_alert) {
+        case 'over':
+          return 'Limite total da categoria Ultrapassado!!'
+        case 'almost':
+          return 'Limite total da categoria quase atingido!!'
+        case 'far':
+          return null
       }
     }
   },
