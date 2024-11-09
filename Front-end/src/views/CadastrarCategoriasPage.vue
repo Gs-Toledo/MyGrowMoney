@@ -3,7 +3,19 @@
     <h2 class="mb-3 font-weight-bold text-lg">Cadastro de Categorias</h2>
     <v-row>
       <v-col>
-        <v-text-field label="Nome da Categoria" v-model="newCategoria" type="text"></v-text-field>
+        <v-text-field
+          label="Nome da Categoria"
+          v-model="newCategoria.name"
+          type="text"
+        ></v-text-field>
+      </v-col>
+      <v-col>
+        <v-text-field
+          label="Limite"
+          prefix="R$"
+          v-model="newCategoria.limit"
+          type="number"
+        ></v-text-field>
       </v-col>
     </v-row>
     <v-btn class="mt-4" type="button" @click="postCadastroNewCategoria"> Cadastrar </v-btn>
@@ -20,19 +32,21 @@ export default {
   },
   data() {
     return {
-      newCategoria: ''
+      newCategoria: {
+        name: '',
+        limit: 0
+      }
     }
   },
   methods: {
     async postCadastroNewCategoria() {
-      console.log('Teste de Formulário enviado:', this.form)
       let url = '/categories'
-      if (this.newCategoria.trim() == '') {
+      if (this.newCategoria.name.trim() == '') {
         alert('Preencha corretamente os campos')
         return
       }
       try {
-        await axiosMyGrowMoney.post(url, { name: this.newCategoria })
+        await axiosMyGrowMoney.post(url, this.newCategoria)
         alert('categoria cadastrada com sucesso')
       } catch (error) {
         console.error('Erro ao cadastrar categoria', error)
@@ -40,8 +54,6 @@ export default {
       }
     }
   },
-  async mounted() {
-
-  }
+  async mounted() {}
 }
 </script>

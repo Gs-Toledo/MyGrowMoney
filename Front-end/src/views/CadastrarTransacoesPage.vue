@@ -19,6 +19,7 @@
           item-value="id"
           v-model="form.categoryId"
         ></v-select>
+        <span class="text-red" v-if="selectedCategoriaLimite">Limite da categoria: R${{ selectedCategoriaLimite }}</span>
       </v-col>
     </v-row>
     <v-row>
@@ -26,6 +27,16 @@
         <v-radio label="Receita" value="receita"></v-radio>
         <v-radio label="Despesa" value="despesa"></v-radio>
       </v-radio-group>
+    </v-row>
+
+    <v-row>
+      <v-col>
+        <v-checkbox
+          label="Transação Recorrente?"
+          v-model="form.is_recurring"
+          class="mt-4"
+        ></v-checkbox>
+      </v-col>
     </v-row>
 
     <v-btn
@@ -36,6 +47,8 @@
     >
       Enviar
     </v-btn>
+
+    <p class="text-red" v-if="avisoLimiteCategoria">{{ avisoLimiteCategoria }}</p>
   </base-user-template>
 </template>
 
@@ -56,10 +69,18 @@ export default {
         value: null,
         date: null,
         categoryId: null,
-        type: 'receita'
+        type: 'receita',
+        is_recurring: false
       },
       categorias: [],
+      selectedCategoriaLimite: null,
+      avisoLimiteCategoria: null,
       isSendingRequest: false
+    }
+  },
+  watch: {
+    'form.categoryId': function () {
+      this.setSelectedCategoryLimit()
     }
   },
   methods: {
@@ -69,15 +90,18 @@ export default {
       let url = '/transactions'
       this.isSendingRequest = true
       try {
-        await axiosMyGrowMoney.post(url, {
+        const response = await axiosMyGrowMoney.post(url, {
           ...this.form,
-          date: this.form.date.toISOString(),
+          date: this.form.date.toISOString()
         })
 
         alert('Cadastro realizado com sucesso!')
+        console.log(response.data)
+
+        this.avisoLimiteCategoria = this.handleLimiteCadastradoCategoria(response.data)
       } catch (error) {
         console.error('Erro ao cadastrar', error)
-        
+
         alert('Erro no cadastro: ' + error?.response?.data.message)
       } finally {
         this.isSendingRequest = false
@@ -93,6 +117,26 @@ export default {
         this.categorias = response.data.categories
       } catch (error) {
         console.error(error)
+      }
+    },
+    setSelectedCategoryLimit() {
+      // Usando o valor do v-model diretamente para encontrar o limite
+      const selectedCategory = this.categorias.find(
+        (category) => category.id === this.form.categoryId
+      )
+      if (selectedCategory) {
+        this.selectedCategoriaLimite = selectedCategory.limit
+      }
+      console.log(this.selectedCategoriaLimite)
+    },
+    handleLimiteCadastradoCategoria(data) {
+      switch (data.budget_alert) {
+        case 'over':
+          return 'Limite total da categoria Ultrapassado!!'
+        case 'almost':
+          return 'Limite total da categoria quase atingido!!'
+        case 'far':
+          return null
       }
     }
   },
