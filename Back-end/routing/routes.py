@@ -4,12 +4,16 @@ from flask import Flask, request, jsonify
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import (
     JWTManager,
-    create_access_token, 
+    create_access_token,
     create_refresh_token,
     get_jwt_identity,
-    jwt_required
+    jwt_required,
 )
 
+from services.budget_alert_service import check_budget_alert
+from data.transactions import Transaction
+from data.categories import Category
+from data.users import User
 from services.sign_up import sign_up
 from services.sign_in import sign_in
 
@@ -25,7 +29,12 @@ from services.delete_category import delete_category
 from services.get_all_categories import get_all_categories
 
 from routing.schemas import SignInSchema, SignUpSchema, schema
-from routing.dtos import to_transaction_dto, to_transactions_dto, to_category_dto, to_categories_dto
+from routing.dtos import (
+    to_transaction_dto,
+    to_transactions_dto,
+    to_category_dto,
+    to_categories_dto,
+)
 
 def register_routes(app: Flask):
     jwt = JWTManager(app)
@@ -115,7 +124,14 @@ def register_routes(app: Flask):
             is_recurring = is_recurring
         )
 
-        return jsonify(success=True, transactionId=transaction_id), 200
+        budget_alert = check_budget_alert(category_id)
+
+        return (
+            jsonify(
+                success=True, transactionId=transaction.id, budget_alert=budget_alert
+            ),
+            200,
+        )
 
     @app.route("/transactions/<id>", methods=["DELETE"])
     @jwt_required()
@@ -123,7 +139,7 @@ def register_routes(app: Flask):
         delete_transaction(transaction_id = id)
 
         return jsonify(success=True), 200
-    
+
     @app.route("/categories/<id>/transactions", methods=["GET"])
     @jwt_required()
     def get_transactions_by_category(id):
@@ -131,13 +147,17 @@ def register_routes(app: Flask):
 
         try:
             category_id = Category.get_by_id(id)
-            transactions = Transaction.select().where(Transaction.category == category_id)
-            transactions_dto = [to_transaction_dto(transaction) for transaction in transactions]
+            transactions = Transaction.select().where(
+                Transaction.category == category_id
+            )
+            transactions_dto = [
+                to_transaction_dto(transaction) for transaction in transactions
+            ]
 
-            return jsonify(success=True, transactions = transactions_dto), 200
+            return jsonify(success=True, transactions=transactions_dto), 200
 
         except Category.DoesNotExist:
-            return jsonify(success=False, message="Categoria não encontrada"), 404
+            return jsonify(success=False, message="Categoria não encontrada"), 404 # noqa
 
     @app.route("/categories", methods=["GET"])
     @jwt_required()

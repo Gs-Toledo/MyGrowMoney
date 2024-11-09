@@ -1,5 +1,6 @@
 from uuid import uuid4
 from peewee import Model, UUIDField, ForeignKeyField, FloatField, DateField, TextField, BooleanField
+from datetime import datetime
 
 from data.database import database
 from data.users import User
