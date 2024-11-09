@@ -16,6 +16,18 @@ from data.categories import Category
 from data.users import User
 from services.sign_up import sign_up
 from services.sign_in import sign_in
+
+from services.get_transaction import get_transaction
+from services.create_transaction import create_transaction
+from services.delete_transaction import delete_transaction
+from services.get_all_transactions import get_all_transactions
+
+from services.get_category import get_category
+from services.create_category import create_category
+from services.update_category import update_category
+from services.delete_category import delete_category
+from services.get_all_categories import get_all_categories
+
 from routing.schemas import SignInSchema, SignUpSchema, schema
 from routing.dtos import (
     to_transaction_dto,
@@ -23,7 +35,6 @@ from routing.dtos import (
     to_category_dto,
     to_categories_dto,
 )
-
 
 def register_routes(app: Flask):
     jwt = JWTManager(app)
@@ -77,8 +88,8 @@ def register_routes(app: Flask):
 
     @app.route("/transactions", methods=["GET"])
     @jwt_required()
-    def get_all_transactions():
-        transactions = Transaction.select().execute()
+    def get_all_transactions_route():
+        transactions = get_all_transactions()
 
         transactions_dto = to_transactions_dto(transactions)
 
@@ -86,8 +97,8 @@ def register_routes(app: Flask):
 
     @app.route("/transactions/<id>", methods=["GET"])
     @jwt_required()
-    def get_transaction(id):
-        transaction = Transaction.get_by_id(id)
+    def get_transaction_route(id):
+        transaction = get_transaction(id)
 
         transaction_dto = to_transaction_dto(transaction)
 
@@ -95,9 +106,8 @@ def register_routes(app: Flask):
 
     @app.route("/transactions", methods=["POST"])
     @jwt_required()
-    def create_transaction():
+    def create_transaction_route():
         user_id = get_jwt_identity()
-        user = User.get_by_id(user_id)
 
         category_id = request.json.get("category_id")
         value = request.json.get("value")
@@ -105,41 +115,36 @@ def register_routes(app: Flask):
         description = request.json.get("description")
         is_recurring = request.json.get("is_recurring", False)
 
-        category = Category.get_or_none(category_id)
-
-        if category is None:
-            return jsonify(success=False, message="Category was not found"), 400
-
-        transaction = Transaction.create(
-            id=uuid4(),
-            user=user,
-            category=category,
-            value=value,
-            date=date,
-            description=description,
-            is_recurring=is_recurring,
+        transaction_id = create_transaction(
+            user_id = user_id,
+            category_id = category_id,
+            value = value,
+            date = date,
+            description = description,
+            is_recurring = is_recurring
         )
 
         budget_alert = check_budget_alert(category_id)
 
         return (
             jsonify(
-                success=True, transactionId=transaction.id, budget_alert=budget_alert
+                success=True,
+                transactionId=transaction_id,
+                budget_alert=budget_alert,
             ),
             200,
         )
 
     @app.route("/transactions/<id>", methods=["DELETE"])
     @jwt_required()
-    def delete_transaction(id):
-        transaction = Transaction.get_by_id(id)
-        transaction.delete_instance()
+    def delete_transaction_route(id):
+        delete_transaction(transaction_id = id)
+
         return jsonify(success=True), 200
 
     @app.route("/categories/<id>/transactions", methods=["GET"])
     @jwt_required()
     def get_transactions_by_category(id):
-
         category_id = request.json.get("category_id")
 
         try:
@@ -158,17 +163,17 @@ def register_routes(app: Flask):
 
     @app.route("/categories", methods=["GET"])
     @jwt_required()
-    def get_all_categories():
-        categories_cursor = Category.select().execute()
+    def get_all_categories_route():
+        categories = get_all_categories()
 
-        categories_dto = to_categories_dto(categories_cursor)
+        categories_dto = to_categories_dto(categories)
 
         return jsonify(success=True, categories=categories_dto), 200
 
     @app.route("/categories/<id>", methods=["GET"])
     @jwt_required()
-    def get_category(id):
-        category = Category.get_by_id(id)
+    def get_category_route(id):
+        category = get_category(id)
 
         category_dto = to_category_dto(category)
 
@@ -176,26 +181,34 @@ def register_routes(app: Flask):
 
     @app.route("/categories", methods=["POST"])
     @jwt_required()
-    def create_category():
+    def create_category_route():
         name = request.json.get("name")
         limit = request.json.get("limit")
 
-        category = Category.create(id=uuid4(), name=name, limit=limit)
+        category_id = create_category(
+            name,
+            limit
+        )
 
-        return jsonify(success=True, categoryId=category.id), 200
+        return jsonify(success=True, categoryId=category_id), 200
 
     @app.route("/categories/<id>", methods=["PUT"])
     @jwt_required()
-    def update_category(id):
-        category = Category.get_by_id(id)
-        category.name = request.json.get("name")
-        category.limit = request.json.get("limit")
-        category.save()
+    def update_category_route(id):
+        name = request.json.get("name")
+        limit = request.json.get("limit")
+
+        update_category(
+            id,
+            name,
+            limit
+        )
+
         return jsonify(success=True), 200
 
     @app.route("/categories/<id>", methods=["DELETE"])
     @jwt_required()
-    def delete_category(id):
-        category = Category.get_by_id(id)
-        category.delete_instance()
+    def delete_category_route(id):
+        delete_category(id)
+
         return jsonify(success=True), 200

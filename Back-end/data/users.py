@@ -2,7 +2,6 @@ from uuid import uuid4
 from peewee import Model, CharField, UUIDField
 from data.database import database
 
-
 class User(Model):
     class Meta:
         database = database
