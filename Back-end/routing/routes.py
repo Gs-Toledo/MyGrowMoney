@@ -11,6 +11,8 @@ from flask_jwt_extended import (
 )
 
 from services.budget_alert_service import check_budget_alert
+from services.expense_summary_service import get_expenses_by_category
+
 from data.transactions import Transaction
 from data.categories import Category
 from data.users import User
@@ -214,3 +216,8 @@ def register_routes(app: Flask):
         delete_category(id)
 
         return jsonify(success=True), 200
+
+    @app.route("/expenses-by-category", methods=["GET"])
+    @jwt_required() 
+    def expenses_by_category_route():
+        return get_expenses_by_category()
