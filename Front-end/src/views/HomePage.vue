@@ -1,13 +1,17 @@
 <template>
-  <base-user-template> ola home </base-user-template>
+  <base-user-template>
+    <dashboard-home />
+  </base-user-template>
 </template>
 
 <script>
 import BaseUserTemplate from '@/components/baseUser/BaseUserTemplate.vue'
-import axiosMyGrowMoney from '@/services/axios-configs';
+import DashboardHome from '@/components/graficos/DashboardHome.vue'
+import axiosMyGrowMoney from '@/services/axios-configs'
 export default {
   components: {
-    BaseUserTemplate
+    BaseUserTemplate,
+    DashboardHome
   },
   data() {
     return {
@@ -23,7 +27,7 @@ export default {
         console.log('response transactions', response.data)
         this.transacoes = response.data.transactions
       } catch (error) {
-        console.error('erro ao buscar transacoes',error)
+        console.error('erro ao buscar transacoes', error)
       }
     }
   },
