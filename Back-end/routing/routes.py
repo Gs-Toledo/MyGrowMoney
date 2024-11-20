@@ -113,6 +113,7 @@ def register_routes(app: Flask):
         user_id = get_jwt_identity()
         user = User.get_by_id(user_id)
         category_id = request.json.get("category_id")
+        transaction_type = request.json.get("type")
         value = request.json.get("value")
         date = request.json.get("date")
         description = request.json.get("description")
@@ -126,6 +127,7 @@ def register_routes(app: Flask):
             id=uuid4(),
             user=user,
             category=category,
+            type=transaction_type,
             value=value,
             date=date,
             description=description,
