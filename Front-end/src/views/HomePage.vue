@@ -1,6 +1,7 @@
 <template>
   <base-user-template>
-    <dashboard-home />
+    <dashboard-home 
+      :despesasCategorias="despesasCategorias" v-if="!isLoading"/>
   </base-user-template>
 </template>
 
@@ -15,24 +16,28 @@ export default {
   },
   data() {
     return {
-      transacoes: []
+      despesasCategorias: [],
+      isLoading: true
     }
   },
   methods: {
-    async getAllTransactions() {
-      let url = '/transactions'
+    async getDespesasPorCategoria() {
+      let url = '/expenses-by-category'
 
       try {
+        this.isLoading = true
         const response = await axiosMyGrowMoney.get(url)
-        console.log('response transactions', response.data)
-        this.transacoes = response.data.transactions
+        this.despesasCategorias = response.data.data
+        console.log('response despesas categorias', this.despesasCategorias)
       } catch (error) {
-        console.error('erro ao buscar transacoes', error)
+        console.error('erro ao buscar despesas categorias', error)
+      } finally {
+        this.isLoading = false
       }
     }
   },
   async mounted() {
-    this.getAllTransactions()
+    this.getDespesasPorCategoria()
   }
 }
 </script>

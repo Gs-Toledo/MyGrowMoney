@@ -115,7 +115,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, defineProps } from 'vue'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -144,6 +144,15 @@ ChartJS.register(
   Legend
 )
 
+const props = defineProps({
+  despesasCategorias: {
+    type: Array,
+    required: true
+  }
+})
+
+console.log('props',props.despesasCategorias)
+
 // Estado
 const resumoMensal = ref({
   saldoInicial: 3800,
@@ -152,14 +161,6 @@ const resumoMensal = ref({
   saldo: 1500,
   saldoFinal: 5300
 })
-
-const despesasPorCategoria = ref([
-  { categoria: 'Alimentação', valor: 1200 },
-  { categoria: 'Moradia', valor: 2000 },
-  { categoria: 'Transporte', valor: 800 },
-  { categoria: 'Lazer', valor: 500 },
-  { categoria: 'Saúde', valor: 600 }
-])
 
 const fluxoCaixa = ref([
   { mes: 'Jul', receitas: 5000, despesas: 4000, saldo: 1000 },
@@ -239,10 +240,10 @@ const barChartOptions = {
 
 // Dados formatados para os gráficos
 const pieChartData = computed(() => ({
-  labels: despesasPorCategoria.value.map((item) => item.categoria),
+  labels: props.despesasCategorias.map((item) => item.category),
   datasets: [
     {
-      data: despesasPorCategoria.value.map((item) => item.valor),
+      data: props.despesasCategorias.map((item) => item.total),
       backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
     }
   ]
