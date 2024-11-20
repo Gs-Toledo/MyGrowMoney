@@ -1,3 +1,4 @@
+from enum import Enum
 from uuid import uuid4
 from peewee import Model, UUIDField, ForeignKeyField, FloatField, DateField, TextField, BooleanField
 from datetime import datetime
@@ -6,13 +7,17 @@ from data.database import database
 from data.users import User
 from data.categories import Category
 
+class TransactionType(Enum): 
+    RECEITA = 'receita'  
+    DESPESA = 'despesa'
+
 class Transaction(Model):
     class Meta:
         database = database
 
     id = UUIDField(primary_key=True)
     user = ForeignKeyField(User, backref='transactions')
-
+    type = TextField(choices=[(tag, tag.value) for tag in TransactionType]) #Tipo da transação
     category = ForeignKeyField(Category, backref='transactions')
     value = FloatField()  # Valor da transação
     date = DateField()  # Data da transação
@@ -31,6 +36,7 @@ def generate_recurring_transactions():
             Transaction.create(
                 user=transaction.user,
                 category=transaction.category,
+                type=transaction.type,
                 value=transaction.value,
                 date=today,
                 description=transaction.description,
