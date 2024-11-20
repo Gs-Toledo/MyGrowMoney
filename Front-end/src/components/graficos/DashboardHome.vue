@@ -129,6 +129,7 @@ import {
   Legend
 } from 'chart.js'
 import { Pie as PieChart, Line as LineChart, Bar as BarChart } from 'vue-chartjs'
+import { formatToLocaleBr } from '@/utils/formatUtils';
 
 // Registrar os componentes necessários do Chart.js
 ChartJS.register(
@@ -292,7 +293,7 @@ const comparativoMensalData = computed(() => ({
 
 // Métodos
 const formatValue = (value) => {
-  return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  return formatToLocaleBr(value)
 }
 </script>
 
