@@ -1,3 +1,4 @@
+from enum import Enum
 from uuid import uuid4
 
 from data.transactions import Transaction
@@ -5,9 +6,14 @@ from data.categories import Category
 from data.users import User
 from services.exception import NotFoundServiceException
 
+class TransactionType(Enum):
+    RECEITA = 'receita'
+    DESPESA = 'despesa'
+
 def create_transaction(
     user_id,
     category_id,
+    type,  # Adicione o tipo de transação como argumento
     value,
     date,
     description = "",
@@ -26,6 +32,7 @@ def create_transaction(
     transaction = Transaction.create(
         id=uuid4(),
         user=user,
+        type=type.value,  # Use o valor do enum
         category=category,
         value=value,
         date=date,
