@@ -33,7 +33,7 @@ from services.update_category import update_category
 from services.delete_category import delete_category
 from services.get_all_categories import get_all_categories
 
-from services.monthly_summary_service import get_monthly_summary
+from services.monthly_summary_service import get_balance_by_month
 
 from routing.schemas import SignInSchema, SignUpSchema, schema
 from routing.dtos import (
@@ -271,7 +271,7 @@ def register_routes(app: Flask):
         user_id = get_jwt_identity()
 
         try:
-            summary = get_monthly_summary(user_id)
+            summary = get_balance_by_month(user_id)
             return jsonify({
                 "success": True,
                 "data": summary
