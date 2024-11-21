@@ -4,6 +4,7 @@ def to_transaction_dto(transaction):
         "value": transaction.value,
         "description": transaction.description,
         "date": transaction.date,
+        "type": transaction.type,
         "category": to_category_dto(transaction.category),
         "is_recurring": transaction.is_recurring,
     }
