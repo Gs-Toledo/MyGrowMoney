@@ -33,6 +33,8 @@ from services.update_category import update_category
 from services.delete_category import delete_category
 from services.get_all_categories import get_all_categories
 
+from services.monthly_summary_service import get_monthly_summary
+
 from routing.schemas import SignInSchema, SignUpSchema, schema
 from routing.dtos import (
     to_transaction_dto,
@@ -262,3 +264,20 @@ def register_routes(app: Flask):
     @jwt_required() 
     def expenses_by_category_route():
         return get_expenses_by_category()
+    
+    @app.route("/monthly-summary", methods=["GET"])
+    @jwt_required()
+    def monthly_summary_route():
+        user_id = get_jwt_identity()
+
+        try:
+            summary = get_monthly_summary(user_id)
+            return jsonify({
+                "success": True,
+                "data": summary
+            })
+        except Exception as e:
+            return jsonify({
+                "success": False,
+                "message": f"Erro ao gerar resumo mensal: {str(e)}"
+            }), 500
