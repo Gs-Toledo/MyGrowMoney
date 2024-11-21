@@ -285,8 +285,11 @@ def register_routes(app: Flask):
         user_id = get_jwt_identity()
 
         try:
+            # Obtém o resumo mensal
             summary = get_balance_by_month(user_id)
-            return jsonify({"success": True, "data": summary})
+            
+            return jsonify(summary)
+        
         except Exception as e:
             return (
                 jsonify(

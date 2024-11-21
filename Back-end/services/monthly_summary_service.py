@@ -19,8 +19,10 @@ def get_balance_by_month(user_id):
              .group_by(fn.strftime("%Y-%m", Transaction.date))
              .order_by(fn.strftime("%Y-%m", Transaction.date)))
 
-    # Formata os resultados
+    # Formata os resultados considerando o saldo inicial e final
     result = []
+    saldo_acumulado = 0  # Inicializa o saldo acumulado
+
     for row in query.dicts():
         year_month = row["year_month"]
         year, month_number = year_month.split("-")
@@ -28,13 +30,26 @@ def get_balance_by_month(user_id):
 
         receitas = row["total_receitas"] or 0
         despesas = row["total_despesas"] or 0
-        saldo = receitas - despesas
+        saldo_mes = receitas - despesas
+
+        # O saldo inicial do mês é o saldo acumulado até o momento
+        saldo_inicial = saldo_acumulado
+
+        # Atualiza o saldo acumulado com o saldo do mês
+        saldo_acumulado += saldo_mes
 
         result.append({
             "mes": month_name,
+            "ano": year,
             "receitas": receitas,
             "despesas": despesas,
-            "saldo": saldo
+            "saldo_inicial": saldo_inicial,
+            "saldo": saldo_mes,
+            "saldo_final": saldo_acumulado
         })
 
-    return result
+    
+    return {
+        "data": result,
+        "success": True
+    }
