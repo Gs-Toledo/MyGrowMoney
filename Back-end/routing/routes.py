@@ -93,8 +93,12 @@ def register_routes(app: Flask):
     @app.route("/transactions", methods=["GET"])
     @jwt_required()
     def get_all_transactions_route():
-        transactions = get_all_transactions()
+        user_id = get_jwt_identity()
+        user = User.get_or_none(id=user_id)
+        if user is None:
+            return jsonify(success=False, message="User not found"), 404
 
+        transactions = Transaction.select().where(Transaction.user == user)
         transactions_dto = to_transactions_dto(transactions)
 
         return jsonify(success=True, transactions=transactions_dto)
@@ -102,27 +106,36 @@ def register_routes(app: Flask):
     @app.route("/transactions/<id>", methods=["GET"])
     @jwt_required()
     def get_transaction_route(id):
-        transaction = get_transaction(id)
+        user_id = get_jwt_identity()
+        user = User.get_or_none(id=user_id)
+        if user is None:
+            return jsonify(success=False, message="User not found"), 404
 
-        transaction_dto = to_transaction_dto(transaction)
-
-        return jsonify(success=True, transaction=transaction_dto)
+        try:
+            transaction = Transaction.get(Transaction.id == id, Transaction.user == user)
+            transaction_dto = to_transaction_dto(transaction)
+            return jsonify(success=True, transaction=transaction_dto)
+        except Transaction.DoesNotExist:
+            return jsonify(success=False, message="Transaction not found"), 404
 
     @app.route("/transactions", methods=["POST"])
     @jwt_required()
     def create_transaction_route():
         user_id = get_jwt_identity()
-        user = User.get_by_id(user_id)
+        user = User.get_or_none(id=user_id)
+        if user is None:
+            return jsonify(success=False, message="User not found"), 404
+
         category_id = request.json.get("category_id")
         transaction_type = request.json.get("type")
         value = request.json.get("value")
         date = request.json.get("date")
         description = request.json.get("description")
         is_recurring = request.json.get("is_recurring", False)
-        category = Category.get_or_none(category_id)
 
+        category = Category.get_or_none(Category.id == category_id, Category.user == user)
         if category is None:
-            return jsonify(success=False, message="Category was not found"), 400  # noqa
+            return jsonify(success=False, message="Category not found"), 404
 
         transaction = Transaction.create(
             id=uuid4(),
@@ -137,37 +150,40 @@ def register_routes(app: Flask):
 
         budget_alert = check_budget_alert(category)
 
-        return (
-            jsonify(
-                success=True,
-                transactionId=transaction.id,
-                budget_alert=budget_alert,  # noqa
-            ),
-            200,
-        )
+        return jsonify(success=True, transactionId=transaction.id, budget_alert=budget_alert), 200
 
     @app.route("/transactions/<id>", methods=["DELETE"])
     @jwt_required()
     def delete_transaction_route(id):
-        delete_transaction(transaction_id=id)
+        user_id = get_jwt_identity()
+        user = User.get_or_none(id=user_id)
+        if user is None:
+            return jsonify(success=False, message="User not found"), 404
 
-        return jsonify(success=True), 200
+        try:
+            transaction = Transaction.get(Transaction.id == id, Transaction.user == user)
+            transaction.delete_instance()
+            return jsonify(success=True), 200
+        except Transaction.DoesNotExist:
+            return jsonify(success=False, message="Transaction not found"), 404
 
     @app.route("/categories/<id>/transactions", methods=["GET"])
     @jwt_required()
     def get_transactions_by_category(id):
-        user_id = get_jwt_identity()  # Obtém o ID do usuário do token JWT
+        user_id = get_jwt_identity()
+        user = User.get_or_none(id=user_id)
+        if user is None:
+            return jsonify(success=False, message="User not found"), 404
 
         try:
-            category = Category.get(Category.id == id, Category.user == user_id)
+            category = Category.get(Category.id == id, Category.user == user)
             transactions = Transaction.select().where(Transaction.category == category)
             transactions_dto = [to_transaction_dto(transaction) for transaction in transactions]
 
             return jsonify(success=True, transactions=transactions_dto), 200
-
         except Category.DoesNotExist:
-            return jsonify(success=False, message="Categoria não encontrada"), 404
-
+            return jsonify(success=False, message="Category not found"), 404
+        
     @app.route("/categories", methods=["GET"])
     @jwt_required()
     def get_all_categories_route():

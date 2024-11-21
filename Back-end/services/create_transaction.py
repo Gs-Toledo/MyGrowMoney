@@ -13,26 +13,26 @@ class TransactionType(Enum):
 def create_transaction(
     user_id,
     category_id,
-    type,  # Adicione o tipo de transação como argumento
+    type,  # Utilizando `type` conforme sua definição
     value,
     date,
-    description = "",
-    is_recurring = False
+    description="",
+    is_recurring=False
 ):
-    user = User.get_or_none(id = user_id)
+    user = User.get_or_none(id=user_id)
 
     if user is None:
         raise NotFoundServiceException("User was not found")
 
-    category = Category.get_or_none(id = category_id)
+    category = Category.get_or_none((Category.id == category_id) & (Category.user == user))
 
     if category is None:
-        raise NotFoundServiceException("Category was not found")
+        raise NotFoundServiceException("Category was not found or does not belong to the user")
 
     transaction = Transaction.create(
         id=uuid4(),
         user=user,
-        type=type.value,  # Use o valor do enum
+        type=type.value,  # Usando o valor do enum
         category=category,
         value=value,
         date=date,
