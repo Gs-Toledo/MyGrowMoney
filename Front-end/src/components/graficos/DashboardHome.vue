@@ -52,8 +52,11 @@
         <div class="card-header">
           <h3 class="text-lg font-semibold">Despesas por Categoria</h3>
         </div>
-        <div class="card-content h-[300px]">
+        <div class="card-content h-[300px]" v-if="despesasCategorias.length > 0">
           <PieChart :data="pieChartData" :options="pieChartOptions" />
+        </div>
+        <div class="card-content" v-else>
+          <span class="text-slate-500">Cadastre Transações e Categorias primeiro...</span>
         </div>
       </div>
 
@@ -62,8 +65,11 @@
         <div class="card-header">
           <h3 class="text-lg font-semibold">Fluxo de Caixa</h3>
         </div>
-        <div class="card-content h-[300px]">
+        <div class="card-content h-[300px]" v-if="monthlySummary.length > 0">
           <LineChart :data="fluxoCaixaData" :options="lineChartOptions" />
+        </div>
+        <div class="card-content" v-else>
+          <span class="text-slate-500">Cadastre Transações e Categorias primeiro...</span>
         </div>
       </div>
     </div>
@@ -129,7 +135,7 @@ import {
   Legend
 } from 'chart.js'
 import { Pie as PieChart, Line as LineChart, Bar as BarChart } from 'vue-chartjs'
-import { formatToLocaleBr } from '@/utils/formatUtils';
+import { formatToLocaleBr } from '@/utils/formatUtils'
 
 // Registrar os componentes necessários do Chart.js
 ChartJS.register(
@@ -148,10 +154,12 @@ const props = defineProps({
   despesasCategorias: {
     type: Array,
     required: true
+  },
+  monthlySummary: {
+    type: Array,
+    required: true
   }
 })
-
-console.log('props',props.despesasCategorias)
 
 // Estado
 const resumoMensal = ref({
@@ -161,14 +169,6 @@ const resumoMensal = ref({
   saldo: 1500,
   saldoFinal: 5300
 })
-
-const fluxoCaixa = ref([
-  { mes: 'Jul', receitas: 5000, despesas: 4000, saldo: 1000 },
-  { mes: 'Ago', receitas: 5500, despesas: 4200, saldo: 1300 },
-  { mes: 'Set', receitas: 4800, despesas: 4500, saldo: 300 },
-  { mes: 'Out', receitas: 6000, despesas: 4100, saldo: 1900 },
-  { mes: 'Nov', receitas: 5800, despesas: 4300, saldo: 1500 }
-])
 
 // Computed Properties
 const mesAtual = computed(() => {
@@ -250,25 +250,25 @@ const pieChartData = computed(() => ({
 }))
 
 const fluxoCaixaData = computed(() => ({
-  labels: fluxoCaixa.value.map((item) => item.mes),
+  labels: props.monthlySummary.map((item) => item.mes),
   datasets: [
     {
       label: 'Receitas',
-      data: fluxoCaixa.value.map((item) => item.receitas),
+      data: props.monthlySummary.map((item) => item.receitas),
       borderColor: '#4CAF50',
       tension: 0.1,
       fill: false
     },
     {
       label: 'Despesas',
-      data: fluxoCaixa.value.map((item) => item.despesas),
+      data: props.monthlySummary.map((item) => item.despesas),
       borderColor: '#f44336',
       tension: 0.1,
       fill: false
     },
     {
       label: 'Saldo',
-      data: fluxoCaixa.value.map((item) => item.saldo),
+      data: props.monthlySummary.map((item) => item.saldo),
       borderColor: '#2196F3',
       tension: 0.1,
       fill: false
@@ -277,16 +277,16 @@ const fluxoCaixaData = computed(() => ({
 }))
 
 const comparativoMensalData = computed(() => ({
-  labels: fluxoCaixa.value.map((item) => item.mes),
+  labels: props.monthlySummary.map((item) => item.mes),
   datasets: [
     {
       label: 'Receitas',
-      data: fluxoCaixa.value.map((item) => item.receitas),
+      data: props.monthlySummary.map((item) => item.receitas),
       backgroundColor: '#4CAF50'
     },
     {
       label: 'Despesas',
-      data: fluxoCaixa.value.map((item) => item.despesas),
+      data: props.monthlySummary.map((item) => item.despesas),
       backgroundColor: '#f44336'
     }
   ]
