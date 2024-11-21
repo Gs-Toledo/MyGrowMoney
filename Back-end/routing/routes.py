@@ -23,6 +23,7 @@ from services.get_transaction import get_transaction
 from services.create_transaction import create_transaction
 from services.delete_transaction import delete_transaction
 from services.get_all_transactions import get_all_transactions
+from services.exception import NotFoundServiceException
 
 from services.get_category import get_category
 from services.create_category import create_category
@@ -155,69 +156,84 @@ def register_routes(app: Flask):
     @app.route("/categories/<id>/transactions", methods=["GET"])
     @jwt_required()
     def get_transactions_by_category(id):
-        category_id = request.json.get("category_id")
+        user_id = get_jwt_identity()  # Obtém o ID do usuário do token JWT
 
         try:
-            category_id = Category.get_by_id(id)
-            transactions = Transaction.select().where(
-                Transaction.category == category_id
-            )
-            transactions_dto = [
-                to_transaction_dto(transaction) for transaction in transactions
-            ]
+            category = Category.get(Category.id == id, Category.user == user_id)
+            transactions = Transaction.select().where(Transaction.category == category)
+            transactions_dto = [to_transaction_dto(transaction) for transaction in transactions]
 
             return jsonify(success=True, transactions=transactions_dto), 200
 
         except Category.DoesNotExist:
-            return (
-                jsonify(success=False, message="Categoria não encontrada"),
-                404,
-            )  # noqa
+            return jsonify(success=False, message="Categoria não encontrada"), 404
 
     @app.route("/categories", methods=["GET"])
     @jwt_required()
     def get_all_categories_route():
-        categories = get_all_categories()
+        user_id = get_jwt_identity()  # Obtém o ID do usuário do token JWT
+        user = User.get_or_none(id=user_id)
 
+        if user is None:
+            raise NotFoundServiceException("User was not found")
+
+        categories = Category.select().where(Category.user == user)
         categories_dto = to_categories_dto(categories)
 
         return jsonify(success=True, categories=categories_dto), 200
 
-    @app.route("/categories/<id>", methods=["GET"])
-    @jwt_required()
-    def get_category_route(id):
-        category = get_category(id)
-
-        category_dto = to_category_dto(category)
-
-        return jsonify(success=True, category=category_dto), 200
-
     @app.route("/categories", methods=["POST"])
     @jwt_required()
     def create_category_route():
+        user_id = get_jwt_identity()  # Obtém o ID do usuário do token JWT
         name = request.json.get("name")
         limit = request.json.get("limit")
 
-        category_id = create_category(name, limit)
+        try:
+            category_id = create_category(user_id, name, limit)
+            return jsonify(success=True, categoryId=category_id), 200
+        except NotFoundServiceException as e:
+            return jsonify(success=False, message=str(e)), 404
 
-        return jsonify(success=True, categoryId=category_id), 200
+    @app.route("/categories/<id>", methods=["GET"])
+    @jwt_required()
+    def get_category_route(id):
+        user_id = get_jwt_identity()  # Obtém o ID do usuário do token JWT
+
+        try:
+            category = Category.get(Category.id == id, Category.user == user_id)
+            category_dto = to_category_dto(category)
+
+            return jsonify(success=True, category=category_dto), 200
+        except Category.DoesNotExist:
+            return jsonify(success=False, message="Categoria não encontrada"), 404
 
     @app.route("/categories/<id>", methods=["PUT"])
     @jwt_required()
     def update_category_route(id):
+        user_id = get_jwt_identity()  # Obtém o ID do usuário do token JWT
         name = request.json.get("name")
         limit = request.json.get("limit")
 
-        update_category(id, name, limit)
-
-        return jsonify(success=True), 200
+        try:
+            category = Category.get(Category.id == id, Category.user == user_id)
+            update_category(id, name, limit)
+            return jsonify(success=True), 200
+        except Category.DoesNotExist:
+            return jsonify(success=False, message="Categoria não encontrada"), 404
 
     @app.route("/categories/<id>", methods=["DELETE"])
     @jwt_required()
     def delete_category_route(id):
-        delete_category(id)
+        user_id = get_jwt_identity()  # Obtém o ID do usuário do token JWT
 
-        return jsonify(success=True), 200
+        try:
+            category = Category.get(Category.id == id, Category.user == user_id)
+            delete_category(id)
+            return jsonify(success=True), 200
+        except Category.DoesNotExist:
+            return jsonify(success=False, message="Categoria não encontrada"), 404
+
 
     @app.route("/expenses-by-category", methods=["GET"])
     @jwt_required() 
