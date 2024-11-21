@@ -10,6 +10,8 @@ from flask_jwt_extended import (
     jwt_required,
 )
 
+import logging
+
 from services.budget_alert_service import check_budget_alert
 from services.expense_summary_service import get_expenses_by_category
 
@@ -118,15 +120,19 @@ def register_routes(app: Flask):
         except Transaction.DoesNotExist:
             return jsonify(success=False, message="Transaction not found"), 404
 
+# Configuração de logging
+    logging.basicConfig(level=logging.DEBUG)
+
     @app.route("/transactions", methods=["POST"])
     @jwt_required()
     def create_transaction_route():
         user_id = get_jwt_identity()
         user = User.get_or_none(id=user_id)
         if user is None:
+            logging.debug("User not found: %s", user_id)
             return jsonify(success=False, message="User not found"), 404
 
-        category_id = request.json.get("category_id")
+        category_id = request.json.get("categoryId")
         transaction_type = request.json.get("type")
         value = request.json.get("value")
         date = request.json.get("date")
@@ -135,6 +141,7 @@ def register_routes(app: Flask):
 
         category = Category.get_or_none(Category.id == category_id, Category.user == user)
         if category is None:
+            logging.debug("Category not found or does not belong to the user: %s", category_id)
             return jsonify(success=False, message="Category not found"), 404
 
         transaction = Transaction.create(

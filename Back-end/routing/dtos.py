@@ -20,7 +20,7 @@ def to_transactions_dto(transactions):
 
 
 def to_category_dto(category):
-    return {"user": category.user.id,"id": category.id, "name": category.name, "limit": category.limit}
+    return {"user": category.user.id ,"id": category.id, "name": category.name, "limit": category.limit}
 
 
 def to_categories_dto(categories):
