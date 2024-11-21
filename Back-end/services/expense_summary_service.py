@@ -12,7 +12,7 @@ def get_expenses_by_category():
     query = (Transaction
              .select(Category.name, fn.SUM(Transaction.value).alias('total'))
              .join(Category)
-             .where(Transaction.user == user_id)  # Filtra pelas transações do usuário autenticado
+             .where(Transaction.user == user_id, Transaction.type == "despesa")  # Filtra pelas transações do usuário autenticado
              .group_by(Category.name))
     
     # Formata o resultado
