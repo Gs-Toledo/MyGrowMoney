@@ -282,7 +282,7 @@ const fluxoCaixaData = computed(() => ({
     },
     {
       label: 'Saldo',
-      data: props.monthlySummary.map((item) => item.saldo),
+      data: props.monthlySummary.map((item) => item.saldo_final),
       borderColor: '#2196F3',
       tension: 0.1,
       fill: false
