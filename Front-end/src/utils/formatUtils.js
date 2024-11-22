@@ -18,3 +18,12 @@ export function formatNumberToMoneyDouble(value) {
         .replace('.', ',')
         .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
+
+export function formatToLocaleBr(value) {
+    try {
+        const valorFormatado = value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        return valorFormatado
+    } catch (error) {
+        return null
+    }
+}

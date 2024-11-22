@@ -1,34 +1,64 @@
 <template>
-  <base-user-template> ola home </base-user-template>
+  <base-user-template>
+    <dashboard-home
+      :despesasCategorias="despesasCategorias"
+      :monthlySummary="monthlySummary"
+      v-if="!isLoading"
+    />
+  </base-user-template>
 </template>
 
 <script>
 import BaseUserTemplate from '@/components/baseUser/BaseUserTemplate.vue'
-import axiosMyGrowMoney from '@/services/axios-configs';
+import DashboardHome from '@/components/graficos/DashboardHome.vue'
+import axiosMyGrowMoney from '@/services/axios-configs'
 export default {
   components: {
-    BaseUserTemplate
+    BaseUserTemplate,
+    DashboardHome
   },
   data() {
     return {
-      transacoes: []
+      despesasCategorias: [],
+      monthlySummary: [],
+      isLoading: true
     }
   },
   methods: {
-    async getAllTransactions() {
-      let url = '/transactions'
+    async getDespesasPorCategoria() {
+      let url = '/expenses-by-category'
 
       try {
         const response = await axiosMyGrowMoney.get(url)
-        console.log('response transactions', response.data)
-        this.transacoes = response.data.transactions
+        this.despesasCategorias = response.data.data
+        console.log('response despesas categorias', this.despesasCategorias)
       } catch (error) {
-        console.error('erro ao buscar transacoes',error)
+        console.error('erro ao buscar despesas categorias')
+        throw new Error(error)
+      }
+    },
+    async getMonthlySummary() {
+      let url = '/monthly-summary'
+
+      try {
+        const response = await axiosMyGrowMoney.get(url)
+        this.monthlySummary = response.data.data
+        console.log('response Fluxo caixa', response.data)
+      } catch (error) {
+        console.error('erro ao buscar fluxo caixa')
+        throw new Error(error)
       }
     }
   },
   async mounted() {
-    this.getAllTransactions()
+    try {
+      this.isLoading = true
+      await Promise.all([this.getDespesasPorCategoria(), this.getMonthlySummary()])
+    } catch (error) {
+      console.error(error)
+    } finally {
+      this.isLoading = false
+    }
   }
 }
 </script>
