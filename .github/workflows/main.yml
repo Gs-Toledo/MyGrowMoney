@@ -63,11 +63,12 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Change directory to Back-end
-        run: cd ./Back-end
-
       - name: Run setup script
-        run: source ./setup.sh
+        run: |
+          cd ./Back-end
+          source ./setup.sh
 
       - name: Run Python tests
-        run: python3 -m unittest
+        run: |
+          cd ./Back-end
+          python3 -m unittest
