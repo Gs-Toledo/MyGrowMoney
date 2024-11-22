@@ -9,10 +9,10 @@
           <i class="text-green-500">↑</i>
         </div>
         <div class="card-content">
-          <div class="text-2xl font-bold text-green-600">
-            R$ {{ formatValue(resumoMensal.receitas) }}
+          <div class="text-2xl font-bold text-green-600" v-if="temDadosMesAtual">
+            R$ {{ formatValue(resumoMesAtual.receitas) }}
           </div>
-          <p class="text-xs text-gray-500">+12% em relação ao mês anterior</p>
+          <div class="text-gray-500" v-else>Sem dados no momento...</div>
         </div>
       </div>
 
@@ -22,10 +22,10 @@
           <i class="text-red-500">↓</i>
         </div>
         <div class="card-content">
-          <div class="text-2xl font-bold text-red-600">
-            R$ {{ formatValue(resumoMensal.despesas) }}
+          <div class="text-2xl font-bold text-red-600" v-if="temDadosMesAtual">
+            R$ {{ formatValue(resumoMesAtual.despesas) }}
           </div>
-          <p class="text-xs text-gray-500">+5% em relação ao mês anterior</p>
+          <div class="text-gray-500" v-else>Sem dados no momento...</div>
         </div>
       </div>
 
@@ -35,12 +35,13 @@
           <i class="text-blue-500">↗</i>
         </div>
         <div class="card-content">
-          <div class="text-2xl font-bold text-blue-600">
-            R$ {{ formatValue(resumoMensal.saldo) }}
+          <div class="text-2xl font-bold text-blue-600" v-if="temDadosMesAtual">
+            R$ {{ formatValue(resumoMesAtual.saldo) }}
           </div>
-          <p class="text-xs text-gray-500">
+          <p class="text-xs text-gray-500" v-if="temDadosMesAtual">
             Economia de {{ calcularPercentualEconomia }}% da receita
           </p>
+          <div class="text-gray-500" v-if="!temDadosMesAtual">Sem dados no momento...</div>
         </div>
       </div>
     </div>
@@ -77,7 +78,7 @@
     <!-- Resumo Mensal -->
     <div class="card">
       <div class="card-header">
-        <h3 class="text-lg font-semibold">Resumo Financeiro - {{ mesAtual }}</h3>
+        <h3 class="text-lg font-semibold">Resumo Financeiro - {{ mesAtual }} {{ anoAtual }}</h3>
       </div>
       <div class="card-content">
         <!-- Grid de resumo -->
@@ -85,25 +86,25 @@
           <div class="p-4 bg-gray-50 rounded-lg">
             <p class="text-sm text-gray-500">Saldo Inicial</p>
             <p class="text-lg font-bold text-gray-900">
-              R$ {{ formatValue(resumoMensal.saldoInicial) }}
+              R$ {{ formatValue(resumoMesAtual.saldo_inicial) }}
             </p>
           </div>
           <div class="p-4 bg-gray-50 rounded-lg">
             <p class="text-sm text-gray-500">Total Receitas</p>
             <p class="text-lg font-bold text-green-600">
-              + R$ {{ formatValue(resumoMensal.receitas) }}
+              + R$ {{ formatValue(resumoMesAtual.receitas) }}
             </p>
           </div>
           <div class="p-4 bg-gray-50 rounded-lg">
             <p class="text-sm text-gray-500">Total Despesas</p>
             <p class="text-lg font-bold text-red-600">
-              - R$ {{ formatValue(resumoMensal.despesas) }}
+              - R$ {{ formatValue(resumoMesAtual.despesas) }}
             </p>
           </div>
           <div class="p-4 bg-gray-50 rounded-lg">
             <p class="text-sm text-gray-500">Saldo Final</p>
             <p class="text-lg font-bold text-blue-600">
-              R$ {{ formatValue(resumoMensal.saldoFinal) }}
+              R$ {{ formatValue(resumoMesAtual.saldo_final) }}
             </p>
           </div>
         </div>
@@ -136,6 +137,7 @@ import {
 } from 'chart.js'
 import { Pie as PieChart, Line as LineChart, Bar as BarChart } from 'vue-chartjs'
 import { formatToLocaleBr } from '@/utils/formatUtils'
+import { getCurrentMonthName, getCurrentYear } from '@/utils/dateUtils'
 
 // Registrar os componentes necessários do Chart.js
 ChartJS.register(
@@ -161,22 +163,30 @@ const props = defineProps({
   }
 })
 
-// Estado
-const resumoMensal = ref({
-  saldoInicial: 3800,
-  receitas: 5800,
-  despesas: 4300,
-  saldo: 1500,
-  saldoFinal: 5300
+const mesAtual = computed(() => {
+  return getCurrentMonthName()
 })
 
-// Computed Properties
-const mesAtual = computed(() => {
-  return 'Novembro 2024'
+const anoAtual = computed(() => {
+  return getCurrentYear()
+})
+
+const temDadosMesAtual = computed(() => {
+  return props.monthlySummary.some(
+    (item) => item.mes == mesAtual.value && item.ano == anoAtual.value
+  )
+})
+
+const resumoMesAtual = computed(() => {
+  const resumo = props.monthlySummary.filter((item) => {
+    return item.mes == mesAtual.value && item.ano == anoAtual.value
+  })
+  console.log(resumo)
+  return resumo[0]
 })
 
 const calcularPercentualEconomia = computed(() => {
-  return ((resumoMensal.value.saldo / resumoMensal.value.receitas) * 100).toFixed(1)
+  return ((resumoMesAtual.value.saldo / resumoMesAtual.value.receitas) * 100).toFixed(1)
 })
 
 // Configurações comuns dos gráficos

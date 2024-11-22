@@ -20,5 +20,10 @@ export function formatNumberToMoneyDouble(value) {
 }
 
 export function formatToLocaleBr(value) {
-    return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-  }
+    try {
+        const valorFormatado = value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        return valorFormatado
+    } catch (error) {
+        return null
+    }
+}
