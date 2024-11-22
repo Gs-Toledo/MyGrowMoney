@@ -85,27 +85,31 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div class="p-4 bg-gray-50 rounded-lg">
             <p class="text-sm text-gray-500">Saldo Inicial</p>
-            <p class="text-lg font-bold text-gray-900">
+            <p class="text-lg font-bold text-gray-900" v-if="temDadosMesAtual">
               R$ {{ formatValue(resumoMesAtual.saldo_inicial) }}
             </p>
+            <div class="text-gray-500" v-if="!temDadosMesAtual">Sem dados no momento...</div>
           </div>
           <div class="p-4 bg-gray-50 rounded-lg">
             <p class="text-sm text-gray-500">Total Receitas</p>
-            <p class="text-lg font-bold text-green-600">
+            <p class="text-lg font-bold text-green-600" v-if="temDadosMesAtual">
               + R$ {{ formatValue(resumoMesAtual.receitas) }}
             </p>
+            <div class="text-gray-500" v-if="!temDadosMesAtual">Sem dados no momento...</div>
           </div>
           <div class="p-4 bg-gray-50 rounded-lg">
             <p class="text-sm text-gray-500">Total Despesas</p>
-            <p class="text-lg font-bold text-red-600">
+            <p class="text-lg font-bold text-red-600" v-if="temDadosMesAtual">
               - R$ {{ formatValue(resumoMesAtual.despesas) }}
             </p>
+            <div class="text-gray-500" v-if="!temDadosMesAtual">Sem dados no momento...</div>
           </div>
           <div class="p-4 bg-gray-50 rounded-lg">
             <p class="text-sm text-gray-500">Saldo Final</p>
-            <p class="text-lg font-bold text-blue-600">
+            <p class="text-lg font-bold text-blue-600" v-if="temDadosMesAtual">
               R$ {{ formatValue(resumoMesAtual.saldo_final) }}
             </p>
+            <div class="text-gray-500" v-if="!temDadosMesAtual">Sem dados no momento...</div>
           </div>
         </div>
 
