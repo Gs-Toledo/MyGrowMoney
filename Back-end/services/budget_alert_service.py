@@ -4,7 +4,6 @@ from peewee import fn
 
 
 def check_budget_alert(categoria):
-
     if categoria is None:
         print(f"Erro: Categoria {categoria} não encontrada.")
         return "category_not_found"
@@ -12,11 +11,12 @@ def check_budget_alert(categoria):
     current_month = datetime.now().month
     current_year = datetime.now().year
 
-    # Calcula o valor total das transações do mês e ano atuais
+    # Calcula o valor total das transações do mês e ano atuais, do tipo "despesa"
     total_value = (
         Transaction.select(fn.SUM(Transaction.value))
         .where(
             (Transaction.category == categoria)
+            & (Transaction.type == "despesa")  # Verificação direta do tipo
             & (fn.strftime("%m", Transaction.date) == f"{current_month:02}")
             & (fn.strftime("%Y", Transaction.date) == str(current_year))
         )
@@ -32,12 +32,13 @@ def check_budget_alert(categoria):
     # Verifica se o limite foi alcançado ou ultrapassado
     if total_value >= categoria.limit:
         print(
-            f"Alerta: Você ultrapassou o orçamento da categoria '{categoria.name}'!" # noqa
-        )  # noqa
+            f"Alerta: Você ultrapassou o orçamento da categoria '{categoria.name}'!"
+        )
         return "over"
     elif total_value >= alert_threshold:
         print(
-            f"Aviso: Você está perto de atingir o orçamento da categoria '{categoria.name}'."  # noqa
+            f"Aviso: Você está perto de atingir o orçamento da categoria '{categoria.name}'."
         )
         return "almost"
+
     return "far"

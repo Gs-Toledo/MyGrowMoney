@@ -33,6 +33,8 @@ from services.update_category import update_category
 from services.delete_category import delete_category
 from services.get_all_categories import get_all_categories
 
+from services.monthly_summary_service import get_balance_by_month
+
 from routing.schemas import SignInSchema, SignUpSchema, schema
 from routing.dtos import (
     to_transaction_dto,
@@ -114,13 +116,15 @@ def register_routes(app: Flask):
             return jsonify(success=False, message="User not found"), 404
 
         try:
-            transaction = Transaction.get(Transaction.id == id, Transaction.user == user)
+            transaction = Transaction.get(
+                Transaction.id == id, Transaction.user == user
+            )
             transaction_dto = to_transaction_dto(transaction)
             return jsonify(success=True, transaction=transaction_dto)
         except Transaction.DoesNotExist:
             return jsonify(success=False, message="Transaction not found"), 404
 
-# Configuração de logging
+    # Configuração de logging
     logging.basicConfig(level=logging.DEBUG)
 
     @app.route("/transactions", methods=["POST"])
@@ -139,9 +143,13 @@ def register_routes(app: Flask):
         description = request.json.get("description")
         is_recurring = request.json.get("is_recurring", False)
 
-        category = Category.get_or_none(Category.id == category_id, Category.user == user)
+        category = Category.get_or_none(
+            Category.id == category_id, Category.user == user
+        )
         if category is None:
-            logging.debug("Category not found or does not belong to the user: %s", category_id)
+            logging.debug(
+                "Category not found or does not belong to the user: %s", category_id
+            )
             return jsonify(success=False, message="Category not found"), 404
 
         transaction = Transaction.create(
@@ -157,7 +165,12 @@ def register_routes(app: Flask):
 
         budget_alert = check_budget_alert(category)
 
-        return jsonify(success=True, transactionId=transaction.id, budget_alert=budget_alert), 200
+        return (
+            jsonify(
+                success=True, transactionId=transaction.id, budget_alert=budget_alert
+            ),
+            200,
+        )
 
     @app.route("/transactions/<id>", methods=["DELETE"])
     @jwt_required()
@@ -168,7 +181,9 @@ def register_routes(app: Flask):
             return jsonify(success=False, message="User not found"), 404
 
         try:
-            transaction = Transaction.get(Transaction.id == id, Transaction.user == user)
+            transaction = Transaction.get(
+                Transaction.id == id, Transaction.user == user
+            )
             transaction.delete_instance()
             return jsonify(success=True), 200
         except Transaction.DoesNotExist:
@@ -185,12 +200,14 @@ def register_routes(app: Flask):
         try:
             category = Category.get(Category.id == id, Category.user == user)
             transactions = Transaction.select().where(Transaction.category == category)
-            transactions_dto = [to_transaction_dto(transaction) for transaction in transactions]
+            transactions_dto = [
+                to_transaction_dto(transaction) for transaction in transactions
+            ]
 
             return jsonify(success=True, transactions=transactions_dto), 200
         except Category.DoesNotExist:
             return jsonify(success=False, message="Category not found"), 404
-        
+
     @app.route("/categories", methods=["GET"])
     @jwt_required()
     def get_all_categories_route():
@@ -251,14 +268,35 @@ def register_routes(app: Flask):
         user_id = get_jwt_identity()  # Obtém o ID do usuário do token JWT
 
         try:
-            category = Category.get(Category.id == id, Category.user == user_id)
+            category = Category.get(Category.id == id, Category.user == user_id) # noqa
             delete_category(id)
             return jsonify(success=True), 200
         except Category.DoesNotExist:
-            return jsonify(success=False, message="Categoria não encontrada"), 404
-
+            return jsonify(success=False, message="Categoria não encontrada"), 404 # noqa
 
     @app.route("/expenses-by-category", methods=["GET"])
-    @jwt_required() 
+    @jwt_required()
     def expenses_by_category_route():
         return get_expenses_by_category()
+
+    @app.route("/monthly-summary", methods=["GET"])
+    @jwt_required()
+    def monthly_summary_route():
+        user_id = get_jwt_identity()
+
+        try:
+            # Obtém o resumo mensal
+            summary = get_balance_by_month(user_id)
+            
+            return jsonify(summary)
+        
+        except Exception as e:
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "message": f"Erro ao gerar resumo mensal: {str(e)}",
+                    }
+                ),
+                500,
+            )

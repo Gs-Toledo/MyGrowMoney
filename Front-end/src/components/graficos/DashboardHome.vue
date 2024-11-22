@@ -9,10 +9,10 @@
           <i class="text-green-500">↑</i>
         </div>
         <div class="card-content">
-          <div class="text-2xl font-bold text-green-600">
-            R$ {{ formatValue(resumoMensal.receitas) }}
+          <div class="text-2xl font-bold text-green-600" v-if="temDadosMesAtual">
+            R$ {{ formatValue(resumoMesAtual.receitas) }}
           </div>
-          <p class="text-xs text-gray-500">+12% em relação ao mês anterior</p>
+          <div class="text-gray-500" v-else>Sem dados no momento...</div>
         </div>
       </div>
 
@@ -22,10 +22,10 @@
           <i class="text-red-500">↓</i>
         </div>
         <div class="card-content">
-          <div class="text-2xl font-bold text-red-600">
-            R$ {{ formatValue(resumoMensal.despesas) }}
+          <div class="text-2xl font-bold text-red-600" v-if="temDadosMesAtual">
+            R$ {{ formatValue(resumoMesAtual.despesas) }}
           </div>
-          <p class="text-xs text-gray-500">+5% em relação ao mês anterior</p>
+          <div class="text-gray-500" v-else>Sem dados no momento...</div>
         </div>
       </div>
 
@@ -35,12 +35,13 @@
           <i class="text-blue-500">↗</i>
         </div>
         <div class="card-content">
-          <div class="text-2xl font-bold text-blue-600">
-            R$ {{ formatValue(resumoMensal.saldo) }}
+          <div class="text-2xl font-bold text-blue-600" v-if="temDadosMesAtual">
+            R$ {{ formatValue(resumoMesAtual.saldo) }}
           </div>
-          <p class="text-xs text-gray-500">
+          <p class="text-xs text-gray-500" v-if="temDadosMesAtual">
             Economia de {{ calcularPercentualEconomia }}% da receita
           </p>
+          <div class="text-gray-500" v-if="!temDadosMesAtual">Sem dados no momento...</div>
         </div>
       </div>
     </div>
@@ -52,8 +53,11 @@
         <div class="card-header">
           <h3 class="text-lg font-semibold">Despesas por Categoria</h3>
         </div>
-        <div class="card-content h-[300px]">
+        <div class="card-content h-[300px]" v-if="despesasCategorias.length > 0">
           <PieChart :data="pieChartData" :options="pieChartOptions" />
+        </div>
+        <div class="card-content" v-else>
+          <span class="text-slate-500">Cadastre Transações e Categorias primeiro...</span>
         </div>
       </div>
 
@@ -62,8 +66,11 @@
         <div class="card-header">
           <h3 class="text-lg font-semibold">Fluxo de Caixa</h3>
         </div>
-        <div class="card-content h-[300px]">
+        <div class="card-content h-[300px]" v-if="monthlySummary.length > 0">
           <LineChart :data="fluxoCaixaData" :options="lineChartOptions" />
+        </div>
+        <div class="card-content" v-else>
+          <span class="text-slate-500">Cadastre Transações e Categorias primeiro...</span>
         </div>
       </div>
     </div>
@@ -71,34 +78,38 @@
     <!-- Resumo Mensal -->
     <div class="card">
       <div class="card-header">
-        <h3 class="text-lg font-semibold">Resumo Financeiro - {{ mesAtual }}</h3>
+        <h3 class="text-lg font-semibold">Resumo Financeiro - {{ mesAtual }} {{ anoAtual }}</h3>
       </div>
       <div class="card-content">
         <!-- Grid de resumo -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div class="p-4 bg-gray-50 rounded-lg">
             <p class="text-sm text-gray-500">Saldo Inicial</p>
-            <p class="text-lg font-bold text-gray-900">
-              R$ {{ formatValue(resumoMensal.saldoInicial) }}
+            <p class="text-lg font-bold text-gray-900" v-if="temDadosMesAtual">
+              R$ {{ formatValue(resumoMesAtual.saldo_inicial) }}
             </p>
+            <div class="text-gray-500" v-if="!temDadosMesAtual">Sem dados no momento...</div>
           </div>
           <div class="p-4 bg-gray-50 rounded-lg">
             <p class="text-sm text-gray-500">Total Receitas</p>
-            <p class="text-lg font-bold text-green-600">
-              + R$ {{ formatValue(resumoMensal.receitas) }}
+            <p class="text-lg font-bold text-green-600" v-if="temDadosMesAtual">
+              + R$ {{ formatValue(resumoMesAtual.receitas) }}
             </p>
+            <div class="text-gray-500" v-if="!temDadosMesAtual">Sem dados no momento...</div>
           </div>
           <div class="p-4 bg-gray-50 rounded-lg">
             <p class="text-sm text-gray-500">Total Despesas</p>
-            <p class="text-lg font-bold text-red-600">
-              - R$ {{ formatValue(resumoMensal.despesas) }}
+            <p class="text-lg font-bold text-red-600" v-if="temDadosMesAtual">
+              - R$ {{ formatValue(resumoMesAtual.despesas) }}
             </p>
+            <div class="text-gray-500" v-if="!temDadosMesAtual">Sem dados no momento...</div>
           </div>
           <div class="p-4 bg-gray-50 rounded-lg">
             <p class="text-sm text-gray-500">Saldo Final</p>
-            <p class="text-lg font-bold text-blue-600">
-              R$ {{ formatValue(resumoMensal.saldoFinal) }}
+            <p class="text-lg font-bold text-blue-600" v-if="temDadosMesAtual">
+              R$ {{ formatValue(resumoMesAtual.saldo_final) }}
             </p>
+            <div class="text-gray-500" v-if="!temDadosMesAtual">Sem dados no momento...</div>
           </div>
         </div>
 
@@ -115,7 +126,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -129,7 +140,8 @@ import {
   Legend
 } from 'chart.js'
 import { Pie as PieChart, Line as LineChart, Bar as BarChart } from 'vue-chartjs'
-import { formatToLocaleBr } from '@/utils/formatUtils';
+import { formatToLocaleBr } from '@/utils/formatUtils'
+import { getCurrentMonthName, getCurrentYear } from '@/utils/dateUtils'
 
 // Registrar os componentes necessários do Chart.js
 ChartJS.register(
@@ -148,35 +160,37 @@ const props = defineProps({
   despesasCategorias: {
     type: Array,
     required: true
+  },
+  monthlySummary: {
+    type: Array,
+    required: true
   }
 })
 
-console.log('props',props.despesasCategorias)
-
-// Estado
-const resumoMensal = ref({
-  saldoInicial: 3800,
-  receitas: 5800,
-  despesas: 4300,
-  saldo: 1500,
-  saldoFinal: 5300
+const mesAtual = computed(() => {
+  return getCurrentMonthName()
 })
 
-const fluxoCaixa = ref([
-  { mes: 'Jul', receitas: 5000, despesas: 4000, saldo: 1000 },
-  { mes: 'Ago', receitas: 5500, despesas: 4200, saldo: 1300 },
-  { mes: 'Set', receitas: 4800, despesas: 4500, saldo: 300 },
-  { mes: 'Out', receitas: 6000, despesas: 4100, saldo: 1900 },
-  { mes: 'Nov', receitas: 5800, despesas: 4300, saldo: 1500 }
-])
+const anoAtual = computed(() => {
+  return getCurrentYear()
+})
 
-// Computed Properties
-const mesAtual = computed(() => {
-  return 'Novembro 2024'
+const temDadosMesAtual = computed(() => {
+  return props.monthlySummary.some(
+    (item) => item.mes == mesAtual.value && item.ano == anoAtual.value
+  )
+})
+
+const resumoMesAtual = computed(() => {
+  const resumo = props.monthlySummary.filter((item) => {
+    return item.mes == mesAtual.value && item.ano == anoAtual.value
+  })
+  console.log(resumo)
+  return resumo[0]
 })
 
 const calcularPercentualEconomia = computed(() => {
-  return ((resumoMensal.value.saldo / resumoMensal.value.receitas) * 100).toFixed(1)
+  return ((resumoMesAtual.value.saldo / resumoMesAtual.value.receitas) * 100).toFixed(1)
 })
 
 // Configurações comuns dos gráficos
@@ -250,25 +264,25 @@ const pieChartData = computed(() => ({
 }))
 
 const fluxoCaixaData = computed(() => ({
-  labels: fluxoCaixa.value.map((item) => item.mes),
+  labels: props.monthlySummary.map((item) => item.mes),
   datasets: [
     {
       label: 'Receitas',
-      data: fluxoCaixa.value.map((item) => item.receitas),
+      data: props.monthlySummary.map((item) => item.receitas),
       borderColor: '#4CAF50',
       tension: 0.1,
       fill: false
     },
     {
       label: 'Despesas',
-      data: fluxoCaixa.value.map((item) => item.despesas),
+      data: props.monthlySummary.map((item) => item.despesas),
       borderColor: '#f44336',
       tension: 0.1,
       fill: false
     },
     {
       label: 'Saldo',
-      data: fluxoCaixa.value.map((item) => item.saldo),
+      data: props.monthlySummary.map((item) => item.saldo_final),
       borderColor: '#2196F3',
       tension: 0.1,
       fill: false
@@ -277,16 +291,16 @@ const fluxoCaixaData = computed(() => ({
 }))
 
 const comparativoMensalData = computed(() => ({
-  labels: fluxoCaixa.value.map((item) => item.mes),
+  labels: props.monthlySummary.map((item) => item.mes),
   datasets: [
     {
       label: 'Receitas',
-      data: fluxoCaixa.value.map((item) => item.receitas),
+      data: props.monthlySummary.map((item) => item.receitas),
       backgroundColor: '#4CAF50'
     },
     {
       label: 'Despesas',
-      data: fluxoCaixa.value.map((item) => item.despesas),
+      data: props.monthlySummary.map((item) => item.despesas),
       backgroundColor: '#f44336'
     }
   ]

@@ -1,7 +1,10 @@
 <template>
   <base-user-template>
-    <dashboard-home 
-      :despesasCategorias="despesasCategorias" v-if="!isLoading"/>
+    <dashboard-home
+      :despesasCategorias="despesasCategorias"
+      :monthlySummary="monthlySummary"
+      v-if="!isLoading"
+    />
   </base-user-template>
 </template>
 
@@ -17,6 +20,7 @@ export default {
   data() {
     return {
       despesasCategorias: [],
+      monthlySummary: [],
       isLoading: true
     }
   },
@@ -25,19 +29,36 @@ export default {
       let url = '/expenses-by-category'
 
       try {
-        this.isLoading = true
         const response = await axiosMyGrowMoney.get(url)
         this.despesasCategorias = response.data.data
         console.log('response despesas categorias', this.despesasCategorias)
       } catch (error) {
-        console.error('erro ao buscar despesas categorias', error)
-      } finally {
-        this.isLoading = false
+        console.error('erro ao buscar despesas categorias')
+        throw new Error(error)
+      }
+    },
+    async getMonthlySummary() {
+      let url = '/monthly-summary'
+
+      try {
+        const response = await axiosMyGrowMoney.get(url)
+        this.monthlySummary = response.data.data
+        console.log('response Fluxo caixa', response.data)
+      } catch (error) {
+        console.error('erro ao buscar fluxo caixa')
+        throw new Error(error)
       }
     }
   },
   async mounted() {
-    this.getDespesasPorCategoria()
+    try {
+      this.isLoading = true
+      await Promise.all([this.getDespesasPorCategoria(), this.getMonthlySummary()])
+    } catch (error) {
+      console.error(error)
+    } finally {
+      this.isLoading = false
+    }
   }
 }
 </script>

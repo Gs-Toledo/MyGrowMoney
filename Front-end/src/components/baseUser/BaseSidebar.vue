@@ -13,7 +13,7 @@
       <router-link class="text-black" to="/categorias">
         <v-list-item prepend-icon="mdi-account-multiple" title="Categorias"></v-list-item>
       </router-link>
-      <v-list-item prepend-icon="mdi-star" title="Sessão 3"></v-list-item>
+      <!-- <v-list-item prepend-icon="mdi-star" title="Sessão 3"></v-list-item> -->
     </v-list>
   </v-navigation-drawer>
 </template>

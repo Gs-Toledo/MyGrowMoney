@@ -25,7 +25,14 @@
         <tbody>
           <tr v-for="(transacao, index) in transacoes" :key="index">
             <td>{{ transacao.description }}</td>
-            <td>R${{ formatarValorMonetario(transacao.value) }}</td>
+            <td
+              :class="{
+                'text-red-600': transacao.type == 'despesa',
+                'text-green-600': transacao.type == 'receita'
+              }"
+            >
+              R${{ formatarValorMonetario(transacao.value) }}
+            </td>
             <th>{{ transacao.category.name }}</th>
             <td>{{ formatDate(transacao.date) }}</td>
             <td v-if="transacao.is_recurring">Sim</td>
