@@ -63,12 +63,8 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Run setup script
-        run: |
-          cd ./Back-end
-          source ./setup.sh
-
       - name: Run Python tests
         run: |
           cd ./Back-end
+          source ./setup.sh
           python3 -m unittest
