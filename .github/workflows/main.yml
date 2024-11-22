@@ -40,10 +40,10 @@ jobs:
         working-directory: ./Front-end
         run: npm ci
 
-      # # Step 5: Run frontend tests
-      # - name: Test
-      #   working-directory: ./Front-end
-      #   run: npm run test
+      # Step 5: Run frontend tests
+      - name: Test
+        working-directory: ./Front-end
+        run: npm run test
 
       # Step 6: Build the frontend
       - name: Build
@@ -54,6 +54,21 @@ jobs:
     name: Back-end
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout the code
+
+    steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Change directory to Back-end
+        run: cd ./Back-end
+
+      - name: Run setup script
+        run: source ./setup.sh
+
+      - name: Run Python tests
+        run: python3 -m unittest
