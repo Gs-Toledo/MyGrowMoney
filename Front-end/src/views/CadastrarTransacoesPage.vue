@@ -1,60 +1,84 @@
 <template>
   <base-user-template>
-    <h2 class="mb-3 font-weight-bold text-lg">Cadastro de Transação</h2>
-    <v-row>
-      <v-col>
-        <v-textarea label="Descrição" v-model="form.description"></v-textarea>
+    <div class="title-section">
+      <h2 class="mb-3 font-weight-bold text-lg">Cadastro de Transação</h2>
+    </div>
+    <section>
+      <v-row>
+        <v-col>
+          <v-textarea label="Descrição" v-model="form.description"></v-textarea>
 
-        <v-text-field label="Valor" prefix="R$" v-model="form.value" type="number"></v-text-field>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-date-input label="Data" v-model="form.date"></v-date-input>
+          <v-text-field label="Valor" prefix="R$" v-model="form.value" type="number"></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-date-input label="Data" v-model="form.date"></v-date-input>
 
-        <v-select
-          label="Categoria"
-          :items="categorias"
-          item-title="name"
-          item-value="id"
-          v-model="form.categoryId"
-        ></v-select>
-        <span class="text-red" v-if="selectedCategoriaLimite">Limite da categoria: R${{ selectedCategoriaLimite }}</span>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-radio-group v-model="form.type">
-        <v-radio label="Receita" value="receita"></v-radio>
-        <v-radio label="Despesa" value="despesa"></v-radio>
-      </v-radio-group>
-    </v-row>
+          <v-select
+            label="Categoria"
+            :items="categorias"
+            item-title="name"
+            item-value="id"
+            v-model="form.categoryId"
+          ></v-select>
+          <span class="text-red" v-if="selectedCategoriaLimite"
+            >Limite da categoria: R${{ selectedCategoriaLimite }}</span
+          >
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-radio-group v-model="form.type">
+          <v-radio label="Receita" value="receita"></v-radio>
+          <v-radio label="Despesa" value="despesa"></v-radio>
+        </v-radio-group>
+      </v-row>
 
-    <v-row>
-      <v-col>
-        <v-checkbox
-          label="Transação Recorrente?"
-          v-model="form.is_recurring"
-          class="mt-4"
-        ></v-checkbox>
-      </v-col>
-    </v-row>
+      <v-row>
+        <v-col>
+          <v-checkbox
+            label="Transação Recorrente?"
+            v-model="form.is_recurring"
+            class="mt-4"
+          ></v-checkbox>
+        </v-col>
+      </v-row>
 
-    <v-btn
-      class="mt-4"
-      :disabled="isSendingRequest"
-      type="button"
-      @click="postCadastrarReceitaDespesa"
-    >
-      Enviar
-    </v-btn>
+      <v-btn
+        class="mt-4"
+        :disabled="isSendingRequest"
+        type="button"
+        @click="postCadastrarReceitaDespesa"
+      >
+        Enviar
+      </v-btn>
 
-    <p class="text-red" v-if="avisoLimiteCategoria">{{ avisoLimiteCategoria }}</p>
+      <p class="text-red" v-if="avisoLimiteCategoria">{{ avisoLimiteCategoria }}</p>
+    </section>
+
+    <div class="title-section mt-3 p-3">
+      <h2 class="mt-3 mb-3 font-weight-bold text-lg">Importar Transação (CSV)</h2>
+    </div>
+    <hr />
+    <section class="mb-5">
+      <form @submit.prevent="handleImportarCsv">
+        <v-row>
+          <v-col cols="4">
+            <v-file-input label="Envie um CSV para Importar" v-model="importCsvFile" required />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-btn type="submit">Importar</v-btn>
+        </v-row>
+      </form>
+    </section>
   </base-user-template>
 </template>
 
 <script>
 import BaseUserTemplate from '@/components/baseUser/BaseUserTemplate.vue'
 import axiosMyGrowMoney from '@/services/axios-configs'
+import CsvHandler from '@/utils/CsvHandler'
 import { VDateInput } from 'vuetify/labs/VDateInput'
 
 export default {
@@ -72,6 +96,7 @@ export default {
         type: 'receita',
         is_recurring: false
       },
+      importCsvFile: null,
       categorias: [],
       selectedCategoriaLimite: null,
       avisoLimiteCategoria: null,
@@ -117,6 +142,18 @@ export default {
         this.categorias = response.data.categories
       } catch (error) {
         console.error(error)
+      }
+    },
+    async handleImportarCsv() {
+      try {
+        const formData = new FormData()
+        formData.append('file', this.importCsvFile)
+
+        await CsvHandler.importCsv(formData)
+        alert('Importado com sucesso!')
+      } catch (error) {
+        console.error('Error ao importar csv', error)
+        alert('Erro ao importar, verifique o arquivo e tente novamente.')
       }
     },
     setSelectedCategoryLimit() {
