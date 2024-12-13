@@ -33,6 +33,9 @@ from services.update_category import update_category
 from services.delete_category import delete_category
 from services.get_all_categories import get_all_categories
 
+from services.import_transactions_service import process_csv_file
+from services.exception import ServiceException
+
 from services.monthly_summary_service import get_balance_by_month
 
 from routing.schemas import SignInSchema, SignUpSchema, schema
@@ -300,3 +303,22 @@ def register_routes(app: Flask):
                 ),
                 500,
             )
+    @app.route("/import-transactions", methods=["POST"])
+    @jwt_required()
+    def import_transactions_route():
+        user_id = get_jwt_identity()
+
+        # Verifica se o arquivo foi enviado
+        file = request.files.get('file')
+        if not file or not file.filename.endswith('.csv'):
+            return jsonify(success=False, message="Arquivo invalido. Por favor insira um arquivo válido."), 400
+
+        try:
+            # Processa o arquivo CSV com o service
+            transaction_ids = process_csv_file(user_id, file)
+            return jsonify(success=True, message="Transactions importadas com sucesso", transactionIds=transaction_ids), 200
+
+        except ServiceException as e:
+            return jsonify(success=False, message=str(e)), 400
+        except Exception as e:
+            return jsonify(success=False, message=f"Unexpected error: {str(e)}"), 500
