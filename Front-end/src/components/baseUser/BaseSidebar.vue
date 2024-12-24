@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer expand-on-hover rail>
     <v-list>
-      <v-list-item :prepend-avatar="userImg" subtitle="Usuario X" title="User Image"></v-list-item>
+      <v-list-item :prepend-avatar="userImg" subtitle="Usuário" title="Bem vindo"></v-list-item>
     </v-list>
 
     <v-divider></v-divider>
