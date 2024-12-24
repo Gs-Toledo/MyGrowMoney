@@ -2,11 +2,13 @@
   <v-app>
     <base-header />
     <v-main>
+      <div id="toast-container"></div>
       <base-sidebar />
       <v-container>
         <slot></slot>
       </v-container>
     </v-main>
+    
   </v-app>
 </template>
 
