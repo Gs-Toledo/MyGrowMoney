@@ -61,13 +61,17 @@ def register_routes(app: Flask):
         email = request.json.get("email")
         password = request.json.get("password")
 
-        user_id = sign_in(email=email, password=password)
+        user = sign_in(email=email, password=password)
+        print(user)
+        user_id = user.id
 
         access_token = create_access_token(identity=user_id)
         refresh_token = create_refresh_token(identity=user_id)
+        userPayload = user.to_dict()
 
         return jsonify(
             success=True,
+            user=userPayload,
             accessToken=access_token,
             refreshToken=refresh_token,
         )

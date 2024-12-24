@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer expand-on-hover rail>
     <v-list>
-      <v-list-item :prepend-avatar="userImg" subtitle="Usuário" title="Bem vindo"></v-list-item>
+      <v-list-item :prepend-avatar="userImg" subtitle="Investidor" :title="getUser.name"></v-list-item>
     </v-list>
 
     <v-divider></v-divider>
@@ -19,12 +19,17 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   data() {
     return {
       userImg:
         'https://w1.pngwing.com/pngs/386/684/png-transparent-face-icon-user-icon-design-user-profile-share-icon-avatar-black-and-white-silhouette.png'
     }
+  },
+  computed: {
+    ...mapGetters(['getUser'])
   }
 }
 </script>

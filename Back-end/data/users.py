@@ -13,6 +13,13 @@ class User(Model):
 
     def check_password(self, password: str):
         return self.password == password
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "name": self.name
+        }
 
 
 User.create_table()
