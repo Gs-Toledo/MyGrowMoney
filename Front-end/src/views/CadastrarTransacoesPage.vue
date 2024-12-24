@@ -79,6 +79,7 @@
 import BaseUserTemplate from '@/components/baseUser/BaseUserTemplate.vue'
 import axiosMyGrowMoney from '@/services/axios-configs'
 import CsvHandler from '@/utils/CsvHandler'
+import { initToast } from '@/utils/toastUtils';
 import { VDateInput } from 'vuetify/labs/VDateInput'
 
 export default {
@@ -97,6 +98,7 @@ export default {
         is_recurring: false
       },
       importCsvFile: null,
+      toast: initToast(),
       categorias: [],
       selectedCategoriaLimite: null,
       avisoLimiteCategoria: null,
@@ -120,14 +122,14 @@ export default {
           date: this.form.date.toISOString()
         })
 
-        alert('Cadastro realizado com sucesso!')
+        this.toast.success('Cadastro realizado com sucesso!')
         console.log(response.data)
 
         this.avisoLimiteCategoria = this.handleLimiteCadastradoCategoria(response.data)
       } catch (error) {
         console.error('Erro ao cadastrar', error)
 
-        alert('Erro no cadastro: ' + error?.response?.data.message)
+        this.toast.error('Erro no cadastro: ' + error?.response?.data.message)
       } finally {
         this.isSendingRequest = false
       }
@@ -150,10 +152,10 @@ export default {
         formData.append('file', this.importCsvFile)
 
         await CsvHandler.importCsv(formData)
-        alert('Importado com sucesso!')
+        this.toast.success('Importado com sucesso!')
       } catch (error) {
         console.error('Error ao importar csv', error)
-        alert('Erro ao importar, verifique o arquivo e tente novamente.')
+        this.toast.error('Erro ao importar, verifique o arquivo e tente novamente.')
       }
     },
     setSelectedCategoryLimit() {
