@@ -47,7 +47,7 @@
       <p v-else>Nenhuma transação encontrada.</p>
     </section>
 
-    <router-link to="/transacoes/cadastro">Cadastrar</router-link>
+    <v-btn class="mt-5"><router-link to="/transacoes/cadastro">Cadastrar</router-link></v-btn>
   </base-user-template>
 </template>
 

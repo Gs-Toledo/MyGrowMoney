@@ -78,7 +78,10 @@
     <!-- Resumo Mensal -->
     <div class="card">
       <div class="card-header">
-        <h3 class="text-lg font-semibold">Resumo Financeiro - {{ mesAtual }} {{ anoAtual }}</h3>
+        <div class="flex justify-space-between">
+          <h3 class="text-lg font-semibold">Resumo Financeiro - {{ mesAtual }} {{ anoAtual }}</h3>
+          <v-btn @click="handleExportCsv">Exportar CSV</v-btn>
+        </div>
       </div>
       <div class="card-content">
         <!-- Grid de resumo -->
@@ -142,6 +145,7 @@ import {
 import { Pie as PieChart, Line as LineChart, Bar as BarChart } from 'vue-chartjs'
 import { formatToLocaleBr } from '@/utils/formatUtils'
 import { getCurrentMonthName, getCurrentYear } from '@/utils/dateUtils'
+import CsvHandler from '@/utils/CsvHandler'
 
 // Registrar os componentes necessários do Chart.js
 ChartJS.register(
@@ -166,6 +170,14 @@ const props = defineProps({
     required: true
   }
 })
+
+const handleExportCsv = () => {
+  try {
+    CsvHandler.exportCsv(props.monthlySummary)
+  } catch (error) {
+    console.error('erro em export csv', error)
+  }
+}
 
 const mesAtual = computed(() => {
   return getCurrentMonthName()
