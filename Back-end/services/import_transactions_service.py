@@ -6,9 +6,14 @@ from data.transactions import Transaction
 from data.categories import Category
 from data.users import User
 from services.exception import NotFoundServiceException, ServiceException
+from features import is_import_transactions_enabled
 
 def process_csv_file(user_id, file):
+    if not is_import_transactions_enabled():
+        raise ServiceException("Import transactions feature is disabled")
+
     user = User.get_or_none(id=user_id)
+
     if user is None:
         raise NotFoundServiceException("User not found.")
 
