@@ -56,22 +56,24 @@
       <p class="text-red" v-if="avisoLimiteCategoria">{{ avisoLimiteCategoria }}</p>
     </section>
 
-    <div class="title-section mt-3 p-3">
-      <h2 class="mt-3 mb-3 font-weight-bold text-lg">Importar Transação (CSV)</h2>
+    <div v-if="isImportTransactionsEnabled">
+      <div class="title-section mt-3 p-3">
+        <h2 class="mt-3 mb-3 font-weight-bold text-lg">Importar Transação (CSV)</h2>
+      </div>
+      <hr />
+      <section class="mb-5">
+        <form @submit.prevent="handleImportarCsv">
+          <v-row>
+            <v-col cols="4">
+              <v-file-input label="Envie um CSV para Importar" v-model="importCsvFile" required />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-btn type="submit">Importar</v-btn>
+          </v-row>
+        </form>
+      </section>
     </div>
-    <hr />
-    <section class="mb-5">
-      <form @submit.prevent="handleImportarCsv">
-        <v-row>
-          <v-col cols="4">
-            <v-file-input label="Envie um CSV para Importar" v-model="importCsvFile" required />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-btn type="submit">Importar</v-btn>
-        </v-row>
-      </form>
-    </section>
   </base-user-template>
 </template>
 
@@ -80,6 +82,7 @@ import BaseUserTemplate from '@/components/baseUser/BaseUserTemplate.vue'
 import axiosMyGrowMoney from '@/services/axios-configs'
 import CsvHandler from '@/utils/CsvHandler'
 import { VDateInput } from 'vuetify/labs/VDateInput'
+import { isImportTransactionsEnabled } from '@/features';
 
 export default {
   components: {
@@ -94,13 +97,14 @@ export default {
         date: null,
         categoryId: null,
         type: 'receita',
-        is_recurring: false
+        is_recurring: false,
       },
       importCsvFile: null,
       categorias: [],
       selectedCategoriaLimite: null,
       avisoLimiteCategoria: null,
-      isSendingRequest: false
+      isSendingRequest: false,
+      isImportTransactionsEnabled: false,
     }
   },
   watch: {
@@ -178,7 +182,9 @@ export default {
     }
   },
   async mounted() {
-    await this.getCategoriasCadastradasCliente()
+    await this.getCategoriasCadastradasCliente()    
+
+    this.isImportTransactionsEnabled = await isImportTransactionsEnabled();
   }
 }
 </script>
