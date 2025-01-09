@@ -37,7 +37,8 @@
 <script>
 import BaseUserTemplate from '@/components/baseUser/BaseUserTemplate.vue'
 import axiosMyGrowMoney from '@/services/axios-configs'
-import { formatNumberToMoneyDouble } from '@/utils/formatUtils';
+import { formatNumberToMoneyDouble } from '@/utils/formatUtils'
+import { initToast } from '@/utils/toastUtils'
 
 export default {
   components: {
@@ -47,7 +48,8 @@ export default {
     return {
       categorias: [],
       isLoading: true,
-      hasError: false
+      hasError: false,
+      toast: initToast()
     }
   },
   methods: {
@@ -73,7 +75,7 @@ export default {
       let url = `/categories/${categoria.id}`
       if (deletarConfirmado) {
         await axiosMyGrowMoney.delete(url)
-        alert('Categoria deletada com sucesso')
+        this.toast.success('Categoria deletada com sucesso')
         this.getCategorias()
       }
     },

@@ -72,14 +72,14 @@ describe('AuthService', () => {
 
     describe('logout', () => {
         it('should push to /login route and remove access_token from localStorage', () => {
-            localStorage.setItem('acess_token', 'fakeToken');
+            localStorage.setItem('loggedUser', 'fakeToken');
 
             AuthService.logout(mockRouter);
 
             expect(mockRouter.push).toHaveBeenCalledWith('/login');
 
             setTimeout(() => {
-                expect(localStorage.removeItem).toHaveBeenCalledWith('acess_token');
+                expect(localStorage.removeItem).toHaveBeenCalledWith('loggedUser');
             }, 100);
         });
     });

@@ -6,7 +6,6 @@
   ></v-img>
 
   <v-card class="mx-auto pa-12 pb-8" elevation="8" max-width="448" rounded="lg">
-    
     <div class="text-subtitle-1 text-medium-emphasis">Nome</div>
 
     <v-text-field
@@ -27,9 +26,7 @@
       variant="outlined"
     ></v-text-field>
 
-    <div
-      class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between"
-    >
+    <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
       Senha
     </div>
 
@@ -44,9 +41,7 @@
       v-model="password"
     ></v-text-field>
 
-    <div
-      class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between"
-    >
+    <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
       Confirmar Senha
     </div>
 
@@ -71,9 +66,7 @@
       Cadastrar
     </v-btn>
 
-    <router-link to="/login" class="text-blue-500 hover:underline">
-      Voltar para Login
-    </router-link>
+    <router-link to="/login" class="text-blue-500 hover:underline"> Voltar para Login </router-link>
 
     <div v-if="errorMessage" class="mt-4 text-red-500">
       {{ errorMessage }}
@@ -82,53 +75,52 @@
 </template>
 
 <script>
-import AuthService from "@/services/AuthService";
+import AuthService from '@/services/AuthService'
 
 export default {
   data() {
     return {
-      email: "",
-      name: "",
-      password: "",
-      confirmPassword: "",
-      errorMessage: "",
+      email: '',
+      name: '',
+      password: '',
+      confirmPassword: '',
+      errorMessage: '',
       isSendingRequest: false,
-      isPasswordVisible: false,
-    };
+      isPasswordVisible: false
+    }
   },
   methods: {
     async registerUser() {
-      this.errorMessage = "";
+      this.errorMessage = ''
       if (!this.validatePasswordFields()) {
-        this.errorMessage = "As senhas não coincidem.";
-        return;
+        this.errorMessage = 'As senhas não coincidem.'
+        return
       }
 
-      this.isSendingRequest = true;
+      this.isSendingRequest = true
       try {
         const accountData = {
           name: this.name,
           email: this.email,
-          password: this.password,
-        };
+          password: this.password
+        }
 
-        await AuthService.createAccount(accountData);
-        alert("Cadastro concluido com sucesso!");
-        this.$router.push("/login");
+        await AuthService.createAccount(accountData)
+        this.toast.success('Cadastro concluido com sucesso!')
+        this.$router.push('/login')
       } catch (error) {
         if (error.response?.data?.message) {
-          this.errorMessage = error.response.data.message;
+          this.errorMessage = error.response.data.message
         } else {
-          this.errorMessage =
-            "Erro ao realizar o cadastro. Tente novamente mais tarde.";
+          this.errorMessage = 'Erro ao realizar o cadastro. Tente novamente mais tarde.'
         }
       } finally {
-        this.isSendingRequest = false;
+        this.isSendingRequest = false
       }
     },
     validatePasswordFields() {
-      return this.password === this.confirmPassword;
-    },
-  },
-};
+      return this.password === this.confirmPassword
+    }
+  }
+}
 </script>

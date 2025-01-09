@@ -55,6 +55,7 @@
 import BaseUserTemplate from '@/components/baseUser/BaseUserTemplate.vue'
 import axiosMyGrowMoney from '@/services/axios-configs'
 import { formatDateFromIso, formatNumberToMoneyDouble } from '@/utils/formatUtils'
+import { initToast } from '@/utils/toastUtils'
 
 export default {
   components: {
@@ -63,6 +64,7 @@ export default {
   data() {
     return {
       transacoes: [],
+      toast: initToast(),
       isLoading: true,
       hasError: false
     }
@@ -92,11 +94,11 @@ export default {
       if (deletarConfirmado) {
         try {
           await axiosMyGrowMoney.delete(url)
-          alert('Transação deletada com sucesso')
+          this.toast.success('Transação deletada com sucesso')
           await this.getTransacoes()
         } catch (error) {
           console.error('Erro ao deletar transação:', error)
-          alert('Erro ao deletar a transação. Tente novamente.')
+          this.toast.error('Erro ao deletar a transação. Tente novamente.')
         }
       }
     },
