@@ -46,7 +46,6 @@ from routing.dtos import (
     to_categories_dto,
 )
 
-
 def register_routes(app: Flask):
     jwt = JWTManager(app)
     bcrypt = Bcrypt(app)
@@ -191,6 +190,42 @@ def register_routes(app: Flask):
             return jsonify(success=True), 200
         except Transaction.DoesNotExist:
             return jsonify(success=False, message="Transaction not found"), 404
+    
+    @app.route("/transactions/<id>", methods=["PUT"])
+    @jwt_required()
+    def update_transaction_route(id):
+        user_id = get_jwt_identity()  # Obtém o ID do usuário do token JWT
+        user = User.get_or_none(id=user_id)
+        if user is None:
+            return jsonify(success=False, message="User not found"), 404
+
+        name = request.json.get("name")
+        limit = request.json.get("limit")
+        transaction_type = request.json.get("type")
+        value = request.json.get("value")
+        date = request.json.get("date")
+        description = request.json.get("description")
+        is_recurring = request.json.get("is_recurring", False)
+
+        try:
+            # Verifica se a transação pertence ao usuário autenticado
+            transaction = Transaction.get(Transaction.id == id, Transaction.user == user_id)
+            # Atualiza os campos da transação
+            transaction.name = name
+            transaction.limit = limit
+            transaction.type = transaction_type
+            transaction.value = value
+            transaction.date = date
+            transaction.description = description
+            transaction.is_recurring = is_recurring
+            transaction.save()
+
+            return jsonify(success=True), 200
+        except Transaction.DoesNotExist:
+            return jsonify(success=False, message="Transaction not found"), 404
+        except Exception as e:
+            return jsonify(success=False, message="An error occurred while updating the transaction."), 500
+
 
     @app.route("/categories/<id>/transactions", methods=["GET"])
     @jwt_required()
@@ -321,4 +356,4 @@ def register_routes(app: Flask):
         except ServiceException as e:
             return jsonify(success=False, message=str(e)), 400
         except Exception as e:
-            return jsonify(success=False, message=f"Unexpected error: {str(e)}"), 500
+            return jsonify(success=False, message=f"Unexpected error: {str(e)}"), 500        
