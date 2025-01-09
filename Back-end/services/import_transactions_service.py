@@ -6,6 +6,7 @@ from data.transactions import Transaction
 from data.categories import Category
 from data.users import User
 from services.exception import NotFoundServiceException, ServiceException
+from services.create_category import create_category
 from features import is_import_transactions_enabled
 
 def process_csv_file(user_id, file):
@@ -26,7 +27,10 @@ def process_csv_file(user_id, file):
         for row in csv_reader:
             category = Category.get_or_none(name=row.get("category"), user=user)
             if category is None:
-                raise NotFoundServiceException(f"Category '{row.get('category')}' not found for user.")
+                # Cria a categoria e obtém o ID
+                category_id = create_category(user.id, row.get("category"), limit=500)
+                # Busca a instância da categoria criada
+                category = Category.get(id=category_id)
 
             transaction = Transaction.create(
                 id=uuid4(),
