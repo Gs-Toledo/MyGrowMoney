@@ -10,7 +10,7 @@
     </div>
 
     <section v-else-if="!isLoading && !hasError">
-      <v-table v-if="categorias.length > 0 && !isLoading">
+      <v-table class="pb-4" v-if="categorias.length > 0 && !isLoading">
         <thead>
           <tr>
             <th class="text-left">Categoria</th>
@@ -20,7 +20,7 @@
         </thead>
         <tbody>
           <tr v-for="(categoria, index) in categorias" :key="index">
-            <td>{{ categoria.name }}</td>
+            <td><router-link :to="`/categorias/${categoria.id}`">{{ categoria.name }}</router-link></td>
             <td>R${{ formatNumberToMoneyDouble(categoria.limit) }}</td>
             <td><v-btn color="red" @click="deleteCategoria(categoria)">Deletar</v-btn></td>
           </tr>
