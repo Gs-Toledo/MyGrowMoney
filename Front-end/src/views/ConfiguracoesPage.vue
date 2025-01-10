@@ -17,14 +17,19 @@
 
           <!-- <v-col> </v-col> -->
         </v-row>
-        <v-btn class="mt-4" :disabled="isSendingRequest" type="submit"> Salvar </v-btn>
+        <v-btn class="mt-4" :disabled="isSendingRequest" type="submit"> Salvar (em desenvolvimento) </v-btn>
       </v-form>
+      <span class="errorDiv" v-else-if="hasError && !isLoading">Erro ao buscar dados...</span>
+      <div v-else-if="isLoading && !hasError">
+        <v-progress-circular indeterminate color="primary" />
+      </div>
     </section>
   </base-user-template>
 </template>
 
 <script>
 import BaseUserTemplate from '@/components/baseUser/BaseUserTemplate.vue'
+import axiosMyGrowMoney from '@/services/axios-configs'
 
 export default {
   components: {
@@ -34,15 +39,37 @@ export default {
     return {
       moedaPrincipal: {},
       moedas: [],
-      isSendingRequest: false,
-      isLoading: false,
+      isSendingRequest: true,
+      isLoading: true,
       hasError: false
     }
   },
   methods: {
-    async atualizarMoedaPrincial() {
-        
+    async atualizarMoedaPrincial() {},
+    async getMoedasFromApi() {
+      let url = '/moedas'
+
+      try {
+        this.isLoading = true
+        this.hasError = false
+        const response = await axiosMyGrowMoney.get(url)
+
+        console.log('moedas', response.data)
+        this.moedas = Object.entries(response.data).map(([key, value]) => ({
+            id: key, // Codigo da moeda
+            name: value // Nome da moeda
+        }))
+        console.log(this.moedas)
+      } catch (error) {
+        console.error(error)
+        this.hasError = true
+      } finally {
+        this.isLoading = false
+      }
     }
+  },
+  async mounted() {
+    await this.getMoedasFromApi()
   }
 }
 </script>
