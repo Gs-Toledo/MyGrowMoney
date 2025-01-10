@@ -52,7 +52,7 @@
           </v-col>
         </v-row>
 
-        <v-btn class="mt-4" :disabled="isSendingRequest" type="sumbmit"> Enviar </v-btn>
+        <v-btn class="mt-4" :disabled="isSendingRequest" type="submit"> Enviar </v-btn>
 
         <p class="text-red" v-if="avisoLimiteCategoria">{{ avisoLimiteCategoria }}</p>
       </v-form>

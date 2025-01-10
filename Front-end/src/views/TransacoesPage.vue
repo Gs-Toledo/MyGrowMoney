@@ -24,7 +24,7 @@
         </thead>
         <tbody>
           <tr v-for="(transacao, index) in transacoes" :key="index">
-            <td>{{ transacao.description }}</td>
+            <td><router-link :to="`/transacoes/${transacao.id}`">{{ transacao.description }}</router-link></td>
             <td
               :class="{
                 'text-red-600': transacao.type == 'despesa',
