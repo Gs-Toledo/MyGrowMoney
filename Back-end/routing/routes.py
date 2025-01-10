@@ -37,6 +37,7 @@ from services.import_transactions_service import process_csv_file
 from services.exception import ServiceException
 
 from services.monthly_summary_service import get_balance_by_month
+from services.currency_service import listar_moedas, converter
 
 from routing.schemas import SignInSchema, SignUpSchema, schema
 from routing.dtos import (
@@ -307,6 +308,7 @@ def register_routes(app: Flask):
                 ),
                 500,
             )
+
     @app.route("/import-transactions", methods=["POST"])
     @jwt_required()
     def import_transactions_route():
@@ -326,3 +328,27 @@ def register_routes(app: Flask):
             return jsonify(success=False, message=str(e)), 400
         except Exception as e:
             return jsonify(success=False, message=f"Unexpected error: {str(e)}"), 500
+
+    @app.route('/moedas', methods=['GET'])
+    def get_moedas():
+        try:
+            moedas = listar_moedas()
+            return jsonify(moedas)
+        except Exception as e:
+            return jsonify(success=False, message=f"Erro ao obter as moedas: {str(e)}"), 500
+
+    @app.route('/converter', methods=['POST'])
+    def post_converter():
+        data = request.json
+        if not data or 'moeda_origem' not in data or 'moeda_destino' not in data or 'valor' not in data:
+            return jsonify(success=False, message="Dados inválidos"), 400
+
+        moeda_origem = data['moeda_origem']
+        moeda_destino = data['moeda_destino']
+        valor = data['valor']
+
+        try:
+            resultado = converter(moeda_origem, moeda_destino, valor)
+            return jsonify(resultado)
+        except Exception as e:
+            return jsonify(success=False, message=f"Erro ao converter as moedas: {str(e)}"), 500
