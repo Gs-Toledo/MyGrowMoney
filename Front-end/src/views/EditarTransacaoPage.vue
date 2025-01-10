@@ -54,6 +54,10 @@
 
         <v-btn class="mt-4" :disabled="isSendingRequest" type="submit"> Editar </v-btn>
       </v-form>
+      <div v-else-if="isLoading && !hasError">
+        <v-progress-circular indeterminate color="primary" />
+      </div>
+      <span class="errorDiv" v-else-if="hasError && !isLoading">Erro ao buscar dados...</span>
     </section>
   </base-user-template>
 </template>
@@ -124,7 +128,7 @@ export default {
     try {
       this.isLoading = true
       this.hasError = false
-      Promise.all([this.getCategoriasCadastradasCliente(), this.getTransacaoById(this.idTransacao)])
+      await Promise.all([this.getCategoriasCadastradasCliente(), this.getTransacaoById(this.idTransacao)])
     } catch (error) {
       console.error(error)
       this.hasError = true
