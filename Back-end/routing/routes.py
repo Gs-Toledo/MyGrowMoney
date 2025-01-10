@@ -276,11 +276,14 @@ def register_routes(app: Flask):
         user_id = get_jwt_identity()  # Obtém o ID do usuário do token JWT
 
         try:
-            category = Category.get(Category.id == id, Category.user == user_id) # noqa
+            category = Category.get(Category.id == id, Category.user == user_id)  # noqa
             delete_category(id)
             return jsonify(success=True), 200
         except Category.DoesNotExist:
-            return jsonify(success=False, message="Categoria não encontrada"), 404 # noqa
+            return (
+                jsonify(success=False, message="Categoria não encontrada"),
+                404,
+            )  # noqa
 
     @app.route("/expenses-by-category", methods=["GET"])
     @jwt_required()
@@ -295,9 +298,9 @@ def register_routes(app: Flask):
         try:
             # Obtém o resumo mensal
             summary = get_balance_by_month(user_id)
-            
+
             return jsonify(summary)
-        
+
         except Exception as e:
             return (
                 jsonify(
@@ -315,14 +318,27 @@ def register_routes(app: Flask):
         user_id = get_jwt_identity()
 
         # Verifica se o arquivo foi enviado
-        file = request.files.get('file')
-        if not file or not file.filename.endswith('.csv'):
-            return jsonify(success=False, message="Arquivo invalido. Por favor insira um arquivo válido."), 400
+        file = request.files.get("file")
+        if not file or not file.filename.endswith(".csv"):
+            return (
+                jsonify(
+                    success=False,
+                    message="Arquivo invalido. Por favor insira um arquivo válido.",
+                ),
+                400,
+            )
 
         try:
             # Processa o arquivo CSV com o service
             transaction_ids = process_csv_file(user_id, file)
-            return jsonify(success=True, message="Transactions importadas com sucesso", transactionIds=transaction_ids), 200
+            return (
+                jsonify(
+                    success=True,
+                    message="Transactions importadas com sucesso",
+                    transactionIds=transaction_ids,
+                ),
+                200,
+            )
 
         except ServiceException as e:
             return jsonify(success=False, message=str(e)), 400
