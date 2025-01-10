@@ -4,7 +4,7 @@
       <h2 class="mb-3 font-weight-bold text-lg">Editar Transação</h2>
     </div>
     <section>
-      <v-form @submit.prevent="atualizarTransacao">
+      <v-form @submit.prevent="atualizarTransacao(idTransacao)" v-if="!isLoading && !hasError">
         <v-row>
           <v-col>
             <v-textarea label="Descrição" v-model="transacao.description" required></v-textarea>
@@ -61,12 +61,14 @@
 <script>
 import BaseUserTemplate from '../components/baseUser/BaseUserTemplate.vue'
 import axiosMyGrowMoney from '@/services/axios-configs'
+import { VDateInput } from 'vuetify/labs/VDateInput'
 import { initToast } from '@/utils/toastUtils'
 
 export default {
   props: ['idTransacao'],
   components: {
-    BaseUserTemplate
+    BaseUserTemplate,
+    VDateInput
   },
   data() {
     return {
@@ -80,10 +82,12 @@ export default {
   },
   methods: {
     async getTransacaoById(idTransacao) {
-      let url = `/transactions/${idTransacao}"`
+      let url = `/transactions/${idTransacao}`
 
       try {
         const response = await axiosMyGrowMoney.get(url)
+        this.transacao = response.data.transaction
+        this.transacao.categoryId = this.transacao.category.id
         console.log(response.data)
       } catch (error) {
         throw new Error(error)
