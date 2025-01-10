@@ -1,5 +1,6 @@
 <template>
   <base-user-template>
+  <p class="text-h4">Bem-vindo, {{ getUser.name }}</p>
     <dashboard-home
       :despesasCategorias="despesasCategorias"
       :monthlySummary="monthlySummary"
@@ -12,6 +13,7 @@
 import BaseUserTemplate from '@/components/baseUser/BaseUserTemplate.vue'
 import DashboardHome from '@/components/graficos/DashboardHome.vue'
 import axiosMyGrowMoney from '@/services/axios-configs'
+import { mapGetters } from 'vuex';
 export default {
   components: {
     BaseUserTemplate,
@@ -23,6 +25,9 @@ export default {
       monthlySummary: [],
       isLoading: true
     }
+  },
+  computed: {
+    ...mapGetters(['getUser'])
   },
   methods: {
     async getDespesasPorCategoria() {

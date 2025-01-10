@@ -47,7 +47,7 @@ class AuthService {
     static logout(router) {
         router.push('/login');
         setTimeout(() => {
-            localStorage.removeItem('acess_token');
+            localStorage.removeItem('loggedUser');
         }, 100);
     }
 }

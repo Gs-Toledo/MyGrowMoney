@@ -12,17 +12,19 @@
     "test:coverage": "vitest --cover"
   },
   "dependencies": {
-    "@mdi/font": "^7.4.47",
-    "axios": "^1.7.7",
-    "vue": "^3.4.37",
-    "vue-router": "^4.4.5",
-    "vuetify": "^3.7.0-beta.1",
-    "vuex": "^4.0.2",
-    "vuex-persistedstate": "^4.1.0",
     "@headlessui/vue": "^1.7.23",
     "@heroicons/vue": "^2.1.5",
+    "@mdi/font": "^7.4.47",
+    "axios": "^1.7.7",
     "chart.js": "^4.4.6",
-    "vue-chartjs": "^5.3.2"
+    "flagsmith": "^8.0.2",
+    "vue": "^3.4.37",
+    "vue-chartjs": "^5.3.2",
+    "vue-router": "^4.4.5",
+    "vue-toastification": "^2.0.0-rc.5",
+    "vuetify": "^3.7.0-beta.1",
+    "vuex": "^4.0.2",
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",

@@ -49,7 +49,7 @@
     <!-- Gráficos -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Gráfico de Pizza -->
-      <div class="card">
+      <div class="card" :data-position="dashboard">
         <div class="card-header">
           <h3 class="text-lg font-semibold">Despesas por Categoria</h3>
         </div>
@@ -324,6 +324,18 @@ const formatValue = (value) => {
 }
 </script>
 
+<script>
+import { getDashboardValue } from '@/features';
+
+export default {
+  data() {
+    return {
+      dashboard: getDashboardValue()
+    }
+  }
+};
+</script>
+
 <style scoped>
 .card {
   @apply bg-white rounded-lg shadow-sm p-6;
@@ -341,5 +353,13 @@ const formatValue = (value) => {
   .h-[300px] {
     height: 250px;
   }
+}
+
+.card[data-position="left"] {
+  order: -1
+}
+
+.card[data-position="right"] {
+  order: 1
 }
 </style>

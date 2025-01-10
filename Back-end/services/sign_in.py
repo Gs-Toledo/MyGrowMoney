@@ -11,7 +11,7 @@ def sign_in(email: str, password: str):
     if not user.check_password(password):
         raise SignInServiceException("Password does not match")
 
-    return user.id
+    return user
 
 
 class SignInServiceException(ServiceException):

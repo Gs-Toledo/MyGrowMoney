@@ -8,6 +8,8 @@ import CadastrarCategoriasPage from '@/views/CadastrarCategoriasPage.vue';
 import CategoriasPage from '@/views/CategoriasPage.vue';
 import CadastrarTransacoesPage from '@/views/CadastrarTransacoesPage.vue';
 import TransacoesPage from '@/views/TransacoesPage.vue';
+import EditarCategoriaPage from '@/views/EditarCategoriaPage.vue';
+import EditarTransacaoPage from '@/views/EditarTransacaoPage.vue';
 
 const routes = [
     {
@@ -72,6 +74,13 @@ const routes = [
         meta: { title: 'Cadastrar Transações' }
     },
     {
+        path: '/transacoes/:idTransacao',
+        props: true,
+        name: 'EditarTransacao',
+        component: EditarTransacaoPage,
+        meta: { title: 'Editar Transação' }
+    },
+    {
         path: '/categorias/cadastro',
         name: 'CadastrarCategorias',
         component: CadastrarCategoriasPage,
@@ -82,6 +91,13 @@ const routes = [
         name: 'Categorias',
         component: CategoriasPage,
         meta: { title: 'Categorias' }
+    },
+    {
+        path: '/categorias/:idCategoria',
+        props: true,
+        name: 'EditarCategoria',
+        component: EditarCategoriaPage,
+        meta: { title: 'Editar Categoria' }
     }
 
 ]
