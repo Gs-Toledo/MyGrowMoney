@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer expand-on-hover rail>
     <v-list>
-      <v-list-item :prepend-avatar="userImg" subtitle="Investidor" :title="getUser.name"></v-list-item>
+      <v-list-item :prepend-avatar="userImg" :subtitle="`Saldo:`" :title="getUser.name"></v-list-item>
     </v-list>
 
     <v-divider></v-divider>
@@ -13,7 +13,9 @@
       <router-link class="text-black" to="/categorias">
         <v-list-item prepend-icon="mdi-account-multiple" title="Categorias"></v-list-item>
       </router-link>
-      <!-- <v-list-item prepend-icon="mdi-star" title="Sessão 3"></v-list-item> -->
+      <router-link class="text-black" to="/configuracoes">
+        <v-list-item prepend-icon="mdi-cog-outline" title="Configurações"></v-list-item>
+      </router-link>
     </v-list>
   </v-navigation-drawer>
 </template>

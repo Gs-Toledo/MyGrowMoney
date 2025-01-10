@@ -10,6 +10,7 @@ import CadastrarTransacoesPage from '@/views/CadastrarTransacoesPage.vue';
 import TransacoesPage from '@/views/TransacoesPage.vue';
 import EditarCategoriaPage from '@/views/EditarCategoriaPage.vue';
 import EditarTransacaoPage from '@/views/EditarTransacaoPage.vue';
+import ConfiguracoesPage from '@/views/ConfiguracoesPage.vue';
 
 const routes = [
     {
@@ -98,6 +99,12 @@ const routes = [
         name: 'EditarCategoria',
         component: EditarCategoriaPage,
         meta: { title: 'Editar Categoria' }
+    },
+    {
+        path: '/configuracoes',
+        name: 'Configuracoes',
+        component: ConfiguracoesPage,
+        meta: { title: 'Configuracões' }
     }
 
 ]
